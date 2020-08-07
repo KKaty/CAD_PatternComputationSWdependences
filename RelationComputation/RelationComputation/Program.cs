@@ -102,9 +102,13 @@ namespace RelationComputation
 
             //Console.WriteLine("Ending.. nodi " + graph.VertexCount + " e archi " + graph.EdgeCount);
 
-            /*
-            var fileName = Path.GetFileNameWithoutExtension(args[0]);
-            var storageGraph = new KLgraph.Graph(graph.Vertices.ToList(), graph.Edges.ToList());
+
+            //var fileName = Path.GetFileNameWithoutExtension(args[0]);
+            //var storageGraph = new KLgraph.Graph(graph.Vertices.ToList(), graph.Edges.ToList());
+
+            var storageGraph = new List<List<MyPatternOfComponents>>();
+            storageGraph.Add(listPattern2);
+            storageGraph.Add(listPattern);
 
             JsonSerializerSettings setting = new JsonSerializerSettings
             {
@@ -119,7 +123,7 @@ namespace RelationComputation
 
             SaveModel(JsonConvert.SerializeObject(storageGraph, setting), directoryOutput, fileNameOutput + ".json");
             Console.WriteLine("JSON saved!");
-            */
+            
             swApp.ExitApp();
         }
 
