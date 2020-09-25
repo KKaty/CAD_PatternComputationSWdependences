@@ -1,6 +1,5 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
-using AssemblyRetrieval.Debug;
 using AssemblyRetrieval.PatternLisa.ClassesOfObjects;
 using SolidWorks.Interop.sldworks;
 
@@ -26,10 +25,6 @@ namespace AssemblyRetrieval.PatternLisa.Assembly.AssemblyUtilities
 
             if (myPathOfPoints.pathGeometricObject.GetType() == typeof (MyLine))
             {
-                const string nameFile = "GetTranslationalPatterns.txt";
-                KLdebug.Print(" ", nameFile);
-                KLdebug.Print("POSSIBILE TRASLAZIONE retta. AVVIO", nameFile);
-
                 SwApplication.SendMsgToUser("traslazione vecchia");
                 return GetPatternsFromLinearPath_Assembly(listOfComponentsOnThePath, myPathOfPoints.pathGeometricObject,
                     ref listOfPathOfPoints, listOfOriginsOnThePath, ref listOfMatrAdj,
@@ -37,10 +32,6 @@ namespace AssemblyRetrieval.PatternLisa.Assembly.AssemblyUtilities
             }
             else
             {
-                const string nameFile = "GetCircularPatterns.txt";
-                KLdebug.Print(" ", nameFile);
-                KLdebug.Print("POSSIBILE TRASLAZIONE o ROTAZIONE su circonferenza. AVVIO", nameFile);
-
                 SwApplication.SendMsgToUser("tras circ vecchia");
 
                 return GetPatternsFromCircularPath_Assembly(listOfComponentsOnThePath, myPathOfPoints.pathGeometricObject,
@@ -122,11 +113,6 @@ namespace AssemblyRetrieval.PatternLisa.Assembly.AssemblyUtilities
             var numOfCompOnThisPath = listOfComponentsOnThePath.Count;
             var noStop = true;
 
-            const string nameFile = "GetTranslationalPatterns.txt";
-            KLdebug.Print(" ", nameFile);
-            KLdebug.Print("VERIFICA DELLE POSSIBILI TRASLAZIONI TRA " + numOfCompOnThisPath + " COMPONENTS:", nameFile);
-            KLdebug.Print(" ", nameFile);
-
             var i = 0;
             while (i < (numOfCompOnThisPath - 1))
             {
@@ -147,12 +133,9 @@ namespace AssemblyRetrieval.PatternLisa.Assembly.AssemblyUtilities
                         ref listOfOutputPattern, ref listOfOutputPatternTwo);
                 }
             }
-            KLdebug.Print(" ", nameFile);
-            KLdebug.Print("FINE LISTA :) ", nameFile);
-
+           
             if (noStop)
             {
-                KLdebug.Print("NESSUNA INTERRUZIONE: PATTERN DI LUNGHEZZA MASSIMA SU QUESTO PATH!", nameFile);
                 return true;
             }
             return false;
@@ -215,13 +198,6 @@ namespace AssemblyRetrieval.PatternLisa.Assembly.AssemblyUtilities
             var numOfCompOnThisPath = listOfComponentsOnThePath.Count;
             var noStop = true;
 
-            const string nameFile = "GetCircularPatterns.txt";
-            KLdebug.Print(" ", nameFile);
-            KLdebug.Print(
-                "VERIFICA DELLE POSSIBILI TRASLAZIONI SU CIRCONFERENZA O ROTAZIONI TRA " + numOfCompOnThisPath + " COMPONENTS:",
-                nameFile);
-            KLdebug.Print(" ", nameFile);
-
             var i = 0;
             while (i < (numOfCompOnThisPath - 1))
             {
@@ -257,12 +233,8 @@ namespace AssemblyRetrieval.PatternLisa.Assembly.AssemblyUtilities
 
             }
    
-            KLdebug.Print(" ", nameFile);
-            KLdebug.Print("FINE LISTA :) ", nameFile);
-    
-            if (noStop)
+           if (noStop)
             {
-                KLdebug.Print("NESSUNA INTERRUZIONE: PATTERN DI LUNGHEZZA MASSIMA SU QUESTO PATH!", nameFile);
                 return true;
             }
             return false;

@@ -1,7 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using AssemblyRetrieval.Debug;
 using AssemblyRetrieval.PatternLisa.ClassesOfObjects;
 using AssemblyRetrieval.PatternLisa.GeometricUtilities;
 using SolidWorks.Interop.sldworks;
@@ -21,8 +20,6 @@ namespace AssemblyRetrieval.PatternLisa.Part.PartUtilities_ComposedPatterns
             ref List<MyComposedPattern> listOfOutputComposedPatternTwo, SldWorks SwApplication, ref StringBuilder fileOutput)
         {
             var nameFile = "ComposedPatterns.txt";
-            KLdebug.Print("", nameFile);
-            KLdebug.Print(">>> VERIFICA DEI PATH TROVATI: " + listOfPathsOfCentroids.Count + " paths", nameFile);
 
             while (listOfPathsOfCentroids.Count > 0)
             {
@@ -34,7 +31,6 @@ namespace AssemblyRetrieval.PatternLisa.Part.PartUtilities_ComposedPatterns
                 bool maxLength;
                 if (currentPathOfCentroids.pathGeometricObject.GetType() == typeof(MyLine))
                 {
-                    KLdebug.Print("PATH DI TIPO LINEA!", nameFile);
                     maxLength = GetComposedPatternsFromPathLine(currentPathOfCentroids,
                     listOfParallelPatterns, ref listOfPathsOfCentroids, ref listOfMyMatrAdj,
                     ref listOfMyGroupingSurface, ref listOfOutputComposedPattern,
@@ -43,7 +39,6 @@ namespace AssemblyRetrieval.PatternLisa.Part.PartUtilities_ComposedPatterns
                 else
                 {
                     //composed rotational pattern of patterns line
-                    KLdebug.Print("PATH DI TIPO CIRCONFERENZA!", nameFile);
                     maxLength = GetComposedPatternsFromPathCircum(currentPathOfCentroids,
                     listOfParallelPatterns, ref listOfPathsOfCentroids, ref listOfMyMatrAdj,
                     ref listOfMyGroupingSurface, ref listOfOutputComposedPattern,
@@ -61,11 +56,6 @@ namespace AssemblyRetrieval.PatternLisa.Part.PartUtilities_ComposedPatterns
         {
             var numOfPatterns = currentPathOfCentroids.path.Count;
             var noStop = true;
-
-            const string nameFile = "ComposedPatterns_Linear.txt";
-            KLdebug.Print(" ", nameFile);
-            KLdebug.Print("VERIFICA DELLE POSSIBILI TRASLAZIONI TRA " + numOfPatterns + " REPEATED ENTITY:", nameFile);
-            KLdebug.Print(" ", nameFile);
 
             var listOfPatternOnThePath = currentPathOfCentroids.path.Select(ind => listOfParallelPatterns[ind]).ToList();
 
@@ -92,12 +82,8 @@ namespace AssemblyRetrieval.PatternLisa.Part.PartUtilities_ComposedPatterns
                     // RICORDA: modificare anche il FindPaths_ComposedPatterns caso Maximum
                 }
             }
-            KLdebug.Print(" ", nameFile);
-            KLdebug.Print("FINE LISTA :) ", nameFile);
-
             if (noStop)
             {
-                KLdebug.Print("NESSUNA INTERRUZIONE: PATTERN DI LUNGHEZZA MASSIMA SU QUESTO PATH!", nameFile);
                 return true;
             }
             return false;
@@ -108,9 +94,6 @@ namespace AssemblyRetrieval.PatternLisa.Part.PartUtilities_ComposedPatterns
             ref MyComposedPattern outputComposedPattern)
         {
             const string nameFile = "ComposedPatterns_Linear.txt";
-            KLdebug.Print(" ", nameFile);
-            KLdebug.Print("NUOVO AVVIO DI RICERCA TRASLAZIONE per pattern composti:", nameFile);
-            KLdebug.Print(" ", nameFile);
             var whatToWrite = "";
 
             var listOfPatternsOfNew = new List<MyPattern> { listOfPatternOnThePath[i] };
@@ -119,17 +102,13 @@ namespace AssemblyRetrieval.PatternLisa.Part.PartUtilities_ComposedPatterns
 
             while (i < (numOfPatterns - 1) && exit == false)
             {
-                KLdebug.Print(" ", nameFile);
-                KLdebug.Print(" ", nameFile);
                 whatToWrite = string.Format("         Confronto {0}^ pattern e la {1}^ pattern: ", i, i + 1);
-                KLdebug.Print(whatToWrite, nameFile);
-
+   
                 if (IsTranslationTwoPatterns(listOfPatternOnThePath[i], listOfPatternOnThePath[i + 1]))
                 {
                     listOfPatternsOfNew.Add(listOfPatternOnThePath[i + 1]);
                     lengthOfNew += 1;
-                    KLdebug.Print("Aggiunta " + (i + 1) + "-esimo pattern. lengthOfNew = "
-                        + lengthOfNew, nameFile);
+                   
                     i++;
                 }
                 else
@@ -137,33 +116,21 @@ namespace AssemblyRetrieval.PatternLisa.Part.PartUtilities_ComposedPatterns
                     exit = true;
                     noStop = false;
 
-                    KLdebug.Print(" ", nameFile);
-                    KLdebug.Print("------>>> Interruzione alla posizione: " + i, nameFile);
-                    KLdebug.Print(" ", nameFile);
-
                     i++;
                 }
             }
-            KLdebug.Print(" ", nameFile);
-
+            
             if (lengthOfNew > 1)
             {
                 outputComposedPattern.listOfMyPattern = listOfPatternsOfNew;
                 outputComposedPattern.pathOfMyComposedPattern = pathObject;
 
-                KLdebug.Print("lengthOfCurrentPath = " + lengthOfNew, nameFile);
-
                 outputComposedPattern.typeOfMyComposedPattern = "(linear) TRANSLATION";
-                KLdebug.Print("CREATO composed PATTERN TRANS (lineare) DI LUNGHEZZA = " + lengthOfNew, nameFile);
-
+                
                 outputComposedPattern.constStepOfMyComposedPattern = listOfPatternsOfNew[0].patternCentroid.Distance(
                     listOfPatternsOfNew[1].patternCentroid);
                 return true;
             }
-
-            KLdebug.Print("lengthOfNew = " + lengthOfNew, nameFile);
-            KLdebug.Print("IL TENTATIVO DI composed PATTERN TRANS ha LUNGHEZZA NULLA, NON HO CREATO NIENTE.", nameFile);
-            KLdebug.Print(" ", nameFile);
 
             return false;
 
@@ -174,7 +141,6 @@ namespace AssemblyRetrieval.PatternLisa.Part.PartUtilities_ComposedPatterns
         public static bool IsTranslationTwoPatterns(MyPattern firstMyPattern, MyPattern secondMyPattern)
         {
             const string nameFile = "ComposedPatterns_Linear.txt";
-            KLdebug.Print(" ", nameFile);
             var whatToWrite = "";
 
             //check of the length correspondence:
@@ -192,17 +158,7 @@ namespace AssemblyRetrieval.PatternLisa.Part.PartUtilities_ComposedPatterns
                 secondMyPattern.patternCentroid.y-firstMyPattern.patternCentroid.y,
                 secondMyPattern.patternCentroid.z-firstMyPattern.patternCentroid.z,
             };
-            whatToWrite = string.Format("Candidate translational array: ({0}, {1}, {2})", candidateTranslationArray[0],
-                            candidateTranslationArray[1], candidateTranslationArray[2]);
-            KLdebug.Print(whatToWrite, nameFile);
-
-            KLdebug.Print("La 0^ RE del 1° pattern è compatibile con la 0^ RE del 2° pattern? " + 
-                PartUtilities.GeometryAnalysis.IsTranslationTwoREGivenCandidateVector(firstMyPattern.listOfMyREOfMyPattern[0],
-                secondMyPattern.listOfMyREOfMyPattern[0], candidateTranslationArray), nameFile);
-            KLdebug.Print("La 0^ RE del 1° pattern è compatibile con la (n-1)^ RE del 2° pattern? " +
-                PartUtilities.GeometryAnalysis.IsTranslationTwoREGivenCandidateVector(firstMyPattern.listOfMyREOfMyPattern[0],
-                secondMyPattern.listOfMyREOfMyPattern[secondPatternLength-1], candidateTranslationArray), nameFile);
-
+            
             if (PartUtilities.GeometryAnalysis.IsTranslationTwoREGivenCandidateVector(firstMyPattern.listOfMyREOfMyPattern[0],
                 secondMyPattern.listOfMyREOfMyPattern[0], candidateTranslationArray) ||
                 PartUtilities.GeometryAnalysis.IsTranslationTwoREGivenCandidateVector(firstMyPattern.listOfMyREOfMyPattern[0],
@@ -223,11 +179,6 @@ namespace AssemblyRetrieval.PatternLisa.Part.PartUtilities_ComposedPatterns
         {
             var numOfPatterns = currentPathOfCentroids.path.Count;
             var noStop = true;
-
-            const string nameFile = "ComposedPatterns_LinearOnCircumference.txt";
-            KLdebug.Print(" ", nameFile);
-            KLdebug.Print("VERIFICA DELLE POSSIBILI Rotazioni TRA " + numOfPatterns + " PATTERNS lineari:", nameFile);
-            KLdebug.Print(" ", nameFile);
 
             var listOfPatternOnThePath = currentPathOfCentroids.path.Select(ind => listOfCoherentPatterns[ind]).ToList();
             var pathCircumference = (MyCircumForPath)currentPathOfCentroids.pathGeometricObject;
@@ -263,12 +214,9 @@ namespace AssemblyRetrieval.PatternLisa.Part.PartUtilities_ComposedPatterns
                         ref listOfOutputComposedPattern, ref listOfOutputComposedPatternTwo);
                 }             
             }
-            KLdebug.Print(" ", nameFile);
-            KLdebug.Print("FINE LISTA :) ", nameFile);
-
+           
             if (noStop)
             {
-                KLdebug.Print("NESSUNA INTERRUZIONE: PATTERN DI LUNGHEZZA MASSIMA SU QUESTO PATH!", nameFile);
                 return true;
             }
             return false;
@@ -280,10 +228,7 @@ namespace AssemblyRetrieval.PatternLisa.Part.PartUtilities_ComposedPatterns
             ref MyComposedPattern outputComposedPattern, SldWorks SwApplication, ref StringBuilder fileOutput)
         {
             const string nameFile = "ComposedPatterns_Linear.txt";
-            KLdebug.Print(" ", nameFile);
-            KLdebug.Print("NUOVO AVVIO DI RICERCA ROTAZIONE per pattern composti:", nameFile);
-            KLdebug.Print(" ", nameFile);
-
+            
             var listOfPatternsOfNew = new List<MyPattern> { listOfPatternOnThePath[i] };
             var lengthOfNew = 1;
             var exit = false;
@@ -305,18 +250,14 @@ namespace AssemblyRetrieval.PatternLisa.Part.PartUtilities_ComposedPatterns
 
             while (i < (numOfPatterns - 1) && exit == false)
             {
-                KLdebug.Print(" ", nameFile);
-                KLdebug.Print(" ", nameFile);
                 var whatToWrite = string.Format("         Confronto {0}^ pattern e la {1}^ pattern: ", i, i + 1);
-                KLdebug.Print(whatToWrite, nameFile);
-
+                
                 if (IsRotationTwoPatterns(listOfPatternOnThePath[i], listOfPatternOnThePath[i + 1], teta, axisDirection,
                     pathObject.circumcenter, SwApplication, ref fileOutput))
                 {
                     listOfPatternsOfNew.Add(listOfPatternOnThePath[i + 1]);
                     lengthOfNew += 1;
-                    KLdebug.Print("Aggiunta " + (i + 1) + "-esimo pattern. lengthOfNew = "
-                        + lengthOfNew, nameFile);
+                    
                     i++;
                 }
                 else
@@ -324,33 +265,21 @@ namespace AssemblyRetrieval.PatternLisa.Part.PartUtilities_ComposedPatterns
                     exit = true;
                     noStop = false;
 
-                    KLdebug.Print(" ", nameFile);
-                    KLdebug.Print("------>>> Interruzione alla posizione: " + i, nameFile);
-                    KLdebug.Print(" ", nameFile);
-
                     i++;
                 }
             }
-            KLdebug.Print(" ", nameFile);
-
+            
             if (lengthOfNew > 1)
             {
                 outputComposedPattern.listOfMyPattern = listOfPatternsOfNew;
                 outputComposedPattern.pathOfMyComposedPattern = pathObject;
 
-                KLdebug.Print("lengthOfCurrentPath = " + lengthOfNew, nameFile);
-
                 outputComposedPattern.typeOfMyComposedPattern = "ROTATION";
-                KLdebug.Print("CREATO composed PATTERN ROTATIONAL DI LUNGHEZZA = " + lengthOfNew, nameFile);
-
+                
                 outputComposedPattern.constStepOfMyComposedPattern = listOfPatternsOfNew[0].patternCentroid.Distance(
                     listOfPatternsOfNew[1].patternCentroid);
                 return true;
             }
-
-            KLdebug.Print("lengthOfNew = " + lengthOfNew, nameFile);
-            KLdebug.Print("IL TENTATIVO DI composed PATTERN ROTATIONAL ha LUNGHEZZA NULLA, NON HO CREATO NIENTE.", nameFile);
-            KLdebug.Print(" ", nameFile);
 
             return false;
         }
@@ -358,9 +287,6 @@ namespace AssemblyRetrieval.PatternLisa.Part.PartUtilities_ComposedPatterns
         public static bool IsRotationTwoPatterns(MyPattern firstMyPattern, MyPattern secondMyPattern, double teta,
             double[] axisDirection, MyVertex circumCenter, SldWorks SwApplication, ref StringBuilder fileOutput)
         {
-            const string nameFile = "ComposedPatterns_LinearOnCircumference.txt";
-            KLdebug.Print(" ", nameFile);
-
             //check of the length correspondence:
             var firstPatternLength = firstMyPattern.listOfMyREOfMyPattern.Count;
             var secondPatternLength = secondMyPattern.listOfMyREOfMyPattern.Count;
@@ -392,9 +318,6 @@ namespace AssemblyRetrieval.PatternLisa.Part.PartUtilities_ComposedPatterns
         //vector between the two pattern centroids as candidate translational vector.
         public static bool IsReflectionTwoPatterns(MyPattern firstMyPattern, MyPattern secondMyPattern)
         {
-            const string nameFile = "ComposedPatterns_Linear.txt";
-            KLdebug.Print(" ", nameFile);
-         
             //check of the length correspondence:
             var firstPatternLength = firstMyPattern.listOfMyREOfMyPattern.Count;
             var secondPatternLength = secondMyPattern.listOfMyREOfMyPattern.Count;
@@ -406,13 +329,6 @@ namespace AssemblyRetrieval.PatternLisa.Part.PartUtilities_ComposedPatterns
             //candidate reflectional plane computation:
             var candidateReflMyPlane = PartUtilities.GeometryAnalysis.GetCandidateReflectionalMyPlane(firstMyPattern.patternCentroid,
              secondMyPattern.patternCentroid, null);
-
-            KLdebug.Print("La 0^ RE del 1° pattern è compatibile con la 0^ RE del 2° pattern? " +
-                PartUtilities.GeometryAnalysis.IsReflectionTwoREGivenCandidateReflPlane(firstMyPattern.listOfMyREOfMyPattern[0],
-                secondMyPattern.listOfMyREOfMyPattern[0], candidateReflMyPlane), nameFile);
-            KLdebug.Print("La 0^ RE del 1° pattern è compatibile con la (n-1)^ RE del 2° pattern? " +
-                PartUtilities.GeometryAnalysis.IsReflectionTwoREGivenCandidateReflPlane(firstMyPattern.listOfMyREOfMyPattern[0],
-                secondMyPattern.listOfMyREOfMyPattern[secondPatternLength - 1], candidateReflMyPlane), nameFile);
 
             if (PartUtilities.GeometryAnalysis.IsReflectionTwoREGivenCandidateReflPlane(firstMyPattern.listOfMyREOfMyPattern[0],
                 secondMyPattern.listOfMyREOfMyPattern[0], candidateReflMyPlane) ||

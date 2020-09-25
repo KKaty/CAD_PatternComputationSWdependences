@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using Accord.Math;
-using AssemblyRetrieval.Debug;
 using AssemblyRetrieval.PatternLisa.ClassesOfObjects;
 using AssemblyRetrieval.PatternLisa.Functions_modifiedFromKatia;
 using SolidWorks.Interop.sldworks;
@@ -194,9 +193,6 @@ namespace AssemblyRetrieval.PatternLisa.Part.PartUtilities
            ref List<MyCone> listOfMyCone, ref List<MyCylinder> listOfMyCylinder, ref List<MyTorus> listOfMyTorus)
         {
             var faceSurface = (Surface)face.GetSurface();
-            const string fileNameBuildRepeatedEntity = "buildRepeatedEntity.txt";
-            var whatToWrite = string.Format("faccia di tipo: {0}", faceSurface.Identity());
-            KLdebug.Print(whatToWrite, fileNameBuildRepeatedEntity);
 
             if (faceSurface.IsPlane())
             {
@@ -295,9 +291,7 @@ namespace AssemblyRetrieval.PatternLisa.Part.PartUtilities
 
         public static MySphere CreateMySphereFromFace(Surface faceSurface)
         {
-            KLdebug.Print("FACCIA SFERICA", "buildRepeatedEntity.txt");
-            KLdebug.Print(" ", "buildRepeatedEntity.txt");
-
+           
             var mySphereParameters = faceSurface.SphereParams;
             double[] mySphereCenter =
             {
@@ -312,8 +306,6 @@ namespace AssemblyRetrieval.PatternLisa.Part.PartUtilities
 
         public static MyCone CreateMyConeFromFace(Surface faceSurface)
         {
-            KLdebug.Print("FACCIA CONICA", "buildRepeatedEntity.txt");
-            KLdebug.Print(" ", "buildRepeatedEntity.txt");
 
             var myConeParameters = faceSurface.ConeParams;
             double[] myConeOrigin =
@@ -341,9 +333,7 @@ namespace AssemblyRetrieval.PatternLisa.Part.PartUtilities
             //DI CUI SPERO DI AVER CONTROLLATO (NEL CONTROLLO DELLA GEOMETRIA) IL GIUSTO 
             //POSIZIONAMENTO.
 
-            KLdebug.Print("FACCIA CILINDRICA", "buildRepeatedEntity.txt");
-            KLdebug.Print(" ", "buildRepeatedEntity.txt");
-
+            
             double[] myCylinderParameters = faceSurface.CylinderParams;
             double[] myCylinderOrigin =
             {
@@ -490,8 +480,6 @@ namespace AssemblyRetrieval.PatternLisa.Part.PartUtilities
                         var newBaseEllipse = new MyEllipse(ellipseParam);
                         currentListOfBaseEllipse.Add(newBaseEllipse);
                     }
-
-                    KLdebug.Print(" ", "buildRepeatedEntity.txt");
                 }
                 i++;
             }
@@ -503,9 +491,6 @@ namespace AssemblyRetrieval.PatternLisa.Part.PartUtilities
 
         public static MyTorus CreateMyTorusFromFace(Surface faceSurface)
         {
-            KLdebug.Print("FACCIA TORO", "buildRepeatedEntity.txt");
-            KLdebug.Print(" ", "buildRepeatedEntity.txt");
-
             var myTorusParameters = faceSurface.TorusParams;
             double[] myTorusCenter =
             {

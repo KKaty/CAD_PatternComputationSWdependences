@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using AssemblyRetrieval.Debug;
 using AssemblyRetrieval.PatternLisa.ClassesOfObjects;
 using AssemblyRetrieval.PatternLisa.GeometricUtilities;
 
@@ -482,29 +481,19 @@ namespace AssemblyRetrieval.PatternLisa.Part.PartUtilities
             double teta, double[] axisDirection, double[] translationalVector)
         {
 
-            const string nameFile = "GetRotationalPatterns.txt";
-            KLdebug.Print(" ", nameFile);
-            KLdebug.Print("------>> CHECK DELLE FACCE CILINDRICHE:", nameFile);
-
+            
             var numOfCylinderSurfacesFirst = firstMyRepeatedEntity.listOfCylindricalSurfaces.Count;
             var numOfCylinderSurfacesSecond = secondMyRepeatedEntity.listOfCylindricalSurfaces.Count;
 
             if (numOfCylinderSurfacesFirst == numOfCylinderSurfacesSecond)
             {
-                KLdebug.Print("Numero di facce CILINDRICHE prima RE: " + numOfCylinderSurfacesFirst, nameFile);
-                KLdebug.Print("Numero di facce CILINDRICHE seconda RE: " + numOfCylinderSurfacesSecond, nameFile);
-                KLdebug.Print("Il numero di facce cilidriche corrisponde, passo alla verifica geometrica:", nameFile);
-                KLdebug.Print(" ", nameFile);
-
-                if (numOfCylinderSurfacesFirst > 0)
+               if (numOfCylinderSurfacesFirst > 0)
                 {
                     var listOfCylindersToLookIn = new List<MyCylinder>(secondMyRepeatedEntity.listOfCylindricalSurfaces);
                     int i = 0;
                     while (listOfCylindersToLookIn.Count != 0 && i < numOfCylinderSurfacesFirst)
                     {
                         var cylinderOfFirst = firstMyRepeatedEntity.listOfCylindricalSurfaces[i];
-                        KLdebug.Print("Sto analizzando lo " + i + "-esimo cilindro: ", nameFile);
-
                         if (!CylinderOfFirstAtPosition_i_IsOkRotation(firstMyRepeatedEntity, secondMyRepeatedEntity, 
                             teta, axisDirection, translationalVector, cylinderOfFirst, ref i)) 
                             return false;
@@ -559,15 +548,11 @@ namespace AssemblyRetrieval.PatternLisa.Part.PartUtilities
                     cyl => cyl.axisCylinder.Equals(axisToFind));
             if (indOfFound != -1)
             {
-                KLdebug.Print("----> Insieme dei cilindri con asse cercato della 2^ RE NON VUOTO: ", nameFile);
-
                 var listOfPossibleCylinders =
                     secondMyRepeatedEntity.listOfCylindricalSurfaces.FindAll(
                         cyl => cyl.axisCylinder.Equals(axisToFind));
                 var numOfPossibleCylinders = listOfPossibleCylinders.Count;
-                KLdebug.Print("Ci sono " + numOfPossibleCylinders + "cilindri candidati. Verifico le altre caratteristiche:", nameFile);
-                KLdebug.Print("", nameFile);
-
+               
                 //If I find cylinders with right axis line, I check the radius correspondence,
                 //the center of bases correspondence.
                 //For elliptical bases I make a further control on radius and direction axis.
@@ -576,15 +561,11 @@ namespace AssemblyRetrieval.PatternLisa.Part.PartUtilities
                 while (notFound && j < numOfPossibleCylinders)
                 {
                     var possibleCylinder = listOfPossibleCylinders[j];
-                    KLdebug.Print(j + "-esimo cilindro candidato:", nameFile);
                     if (Math.Abs(cylinderOfFirst.radiusCylinder - possibleCylinder.radiusCylinder) < tolerance)
                     {
-                        KLdebug.Print("----raggio del cilindro OK", nameFile);
-
                         if (CheckOfClosedEdgesCorrespondenceRot(cylinderOfFirst, possibleCylinder,
                             teta, axisDirection, translationalVector))
                         {
-                            KLdebug.Print("TROVATO CILINDRO GIUSTO. FINE", nameFile);
                             notFound = false;
                         }
                     }
@@ -592,8 +573,6 @@ namespace AssemblyRetrieval.PatternLisa.Part.PartUtilities
                 }
                 if (notFound)
                 {
-                    KLdebug.Print("", nameFile);
-                    KLdebug.Print("NESSUN CILINDRO CORRISPONDENTE. FINE", nameFile);
                     return false;
                 }
 
@@ -602,7 +581,6 @@ namespace AssemblyRetrieval.PatternLisa.Part.PartUtilities
             }
             else
             {
-                KLdebug.Print("----> Insieme dei cilindri con asse corrispondente della 2^ RE VUOTO. FINE", nameFile);
                 return false;
             }
             return true;
@@ -628,19 +606,12 @@ namespace AssemblyRetrieval.PatternLisa.Part.PartUtilities
             int numOfCircleSecond = listOfCircleSecond.Count;
             int numOfEllipseSecond = listOfEllipseSecond.Count;
 
-            KLdebug.Print("Numero circle chiuse della 1^ RE: " + numOfCircleFirst, nameFile);
-            KLdebug.Print("Numero circle chiuse della 2^ RE: " + numOfCircleSecond, nameFile);
-            KLdebug.Print("Numero ellipse chiuse della 1^ RE: " + numOfEllipseFirst, nameFile);
-            KLdebug.Print("Numero ellipse chiuse della 2^ RE: " + numOfEllipseSecond, nameFile);
-
+            
             if (numOfCircleFirst == numOfCircleSecond && numOfEllipseFirst == numOfEllipseSecond)
             {
-                KLdebug.Print("Il numero di CIRCLE e ELLIPSE corrisponde.", nameFile);
-                KLdebug.Print(" ", nameFile);
-
+                
                 if (numOfCircleFirst + numOfEllipseFirst == 0)  //cylinders with baseFace not planar
                 {
-                    KLdebug.Print("Non ci sono circle o ellipse di base. FINE DELLA VERIFICA DELLA CORRISPONDENZA DEGLI EDGE DI BASE DEL CILINDRO.", nameFile);
                     return true;
                 }
                 if (!CorrespondenceOfCirclesInCylinderRot(teta, axisDirection, translationalVector, listOfCircleFirst, listOfCircleSecond)) return false;
@@ -667,32 +638,21 @@ namespace AssemblyRetrieval.PatternLisa.Part.PartUtilities
                 // for every circle of first cylinder
                 while (i < numOfCircleFirst)
                 {
-                    KLdebug.Print(i + "-esimo Circle del 1° cilindro:", nameFile);
-
                     var firstCenter = listOfCircleFirst[i].centerCircle;
                     var firstCenterTranslated = new MyVertex(firstCenter.x+translationalVector[0], 
                         firstCenter.y+translationalVector[1], firstCenter.z+translationalVector[2]);
-                    var whatToWrite = string.Format("Centro della prima crf ({0},{1},{2})", firstCenter.x, firstCenter.y, firstCenter.z);
-                    KLdebug.Print(whatToWrite, nameFile);
-
+                    
                     int j = 0;
                     var thisCircleIsOk = false;
 
                     while (thisCircleIsOk == false && j < numOfCircleSecond)
                     {
-                        KLdebug.Print(j + "-esimo Circle del 2° cilindro:", nameFile);
-
                         var secondCenter = listOfCircleSecond[j].centerCircle;
                         var secondCenterTranslated = new MyVertex(secondCenter.x + translationalVector[0],
                         secondCenter.y + translationalVector[1], secondCenter.z + translationalVector[2]);
 
-                        whatToWrite = string.Format("Centro della seconda crf ({0},{1},{2})", secondCenter.x, secondCenter.y, secondCenter.z);
-                        KLdebug.Print(whatToWrite, nameFile);
-
                         thisCircleIsOk = secondCenterTranslated.IsRotationOf(firstCenterTranslated, teta, axisDirection);
-                        KLdebug.Print("Corrispondono i centri? " + thisCircleIsOk, nameFile);
-                        KLdebug.Print(" ", nameFile);
-
+                        
                         if (thisCircleIsOk)
                         {
                             listOfCircleSecond.RemoveAt(j);
@@ -701,19 +661,12 @@ namespace AssemblyRetrieval.PatternLisa.Part.PartUtilities
                     }
                     if (!thisCircleIsOk)
                     {
-                        KLdebug.Print("Non ho trovato nessun Circle che vada bene nel 2° cilindro. FINE.", nameFile);
                         return false;
                     }
                     numOfCircleSecond = listOfCircleSecond.Count;
                     i++;
                 }
             }
-            else
-            {
-                KLdebug.Print("Non ci sono Circle in questo cilindro della 1^ RE. Passo agli ellissi.", nameFile);
-            }
-            KLdebug.Print("VERIFICA DEI CIRCLE é OK.", nameFile);
-            KLdebug.Print(" ", nameFile);
 
             return true;
         }
@@ -738,7 +691,7 @@ namespace AssemblyRetrieval.PatternLisa.Part.PartUtilities
                     var firstCenter = firstEllipse.centerEllipse;
                     var firstCenterTranslated = new MyVertex(firstCenter.x + translationalVector[0],
                         firstCenter.y + translationalVector[1], firstCenter.z + translationalVector[2]);
-                    KLdebug.Print(i + "-esimo Ellipse del 1° cilindro:", nameFile);
+                    
                     //var whatToWrite = string.Format("Centro della prima ellisse ({0},{1},{2})", firstEllipse.centerEllipse.x, firstEllipse.centerEllipse.y, firstEllipse.centerEllipse.z);
                     //KLdebug.Print(whatToWrite, nameFile);
 
@@ -748,7 +701,6 @@ namespace AssemblyRetrieval.PatternLisa.Part.PartUtilities
                     while (thisEllipseIsOk == false && j < numOfEllipseSecond)
                     {
                         var secondEllipse = listOfEllipseSecond[j];
-                        KLdebug.Print(j + "-esimo Ellipse del 2° cilindro:", nameFile);
                         //whatToWrite = string.Format("Centro della seconda ellisse ({0},{1},{2})", secondEllipse.centerEllipse.x, secondEllipse.centerEllipse.y, secondEllipse.centerEllipse.z);
                         //KLdebug.Print(whatToWrite, nameFile);
 
@@ -760,13 +712,11 @@ namespace AssemblyRetrieval.PatternLisa.Part.PartUtilities
                             teta, axisDirection);
                         if (thisEllipseIsOk)
                         {
-                            KLdebug.Print("Corrispondono i centri? " + thisEllipseIsOk, nameFile);
                             //if the radius correspond:
                             if (Math.Abs(firstEllipse.majorRadEllipse - secondEllipse.majorRadEllipse) < tolerance &&
                                 Math.Abs(firstEllipse.minorRadEllipse - secondEllipse.minorRadEllipse) < tolerance)
                             {
-                                KLdebug.Print("Corrispondono i major e minor radius? True", nameFile);
-
+                    
                                 //check if the directions corresponding to the axis are ok:
 
                                 var firstMajorAxisDirectionEllipseMyVertex = new MyVertex(firstEllipse.majorAxisDirectionEllipse[0],
@@ -799,25 +749,21 @@ namespace AssemblyRetrieval.PatternLisa.Part.PartUtilities
                                     secondMinorAxisDirectionEllipseMyVertex.IsRotationOf(
                                         firstMinorAxisDirectionEllipseOppositeMyVertex, teta, axisDirection))
                                     {
-                                        KLdebug.Print("Corrispondono i major minor axis direction? True", nameFile);
                                         listOfEllipseSecond.RemoveAt(j);
                                     }
                                     else
                                     {
-                                        KLdebug.Print("Corrispondono i major minor axis direction? False", nameFile);
                                         thisEllipseIsOk = false;
                                     }
 
                                 }
                                 else
                                 {
-                                    KLdebug.Print("Corrispondono i major minor axis direction? False", nameFile);
                                     thisEllipseIsOk = false;
                                 }
                             }
                             else
                             {
-                                KLdebug.Print("Corrispondono i major minor radius? False", nameFile);
                                 thisEllipseIsOk = false;
                             }
                         }
@@ -825,7 +771,6 @@ namespace AssemblyRetrieval.PatternLisa.Part.PartUtilities
                     }
                     if (!thisEllipseIsOk)
                     {
-                        KLdebug.Print("Non ho trovato nessun Ellipse che vada bene nel 2° cilindro. Fine.", nameFile);
                         return false;
                     }
                     else
@@ -835,12 +780,6 @@ namespace AssemblyRetrieval.PatternLisa.Part.PartUtilities
                     }
                 }
             }
-            else
-            {
-                KLdebug.Print("Non ci sono Ellipse in questo cilindro della 1^ RE.", nameFile);
-            }
-            KLdebug.Print("VERIFICA DEGLI ELLIPSE é OK.", nameFile);
-            KLdebug.Print(" ", nameFile);
             return true;
         }      
 

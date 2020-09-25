@@ -1,5 +1,4 @@
 ﻿using System.Text;
-using AssemblyRetrieval.Debug;
 using AssemblyRetrieval.PatternLisa.ClassesOfObjects;
 using SolidWorks.Interop.sldworks;
 
@@ -45,7 +44,6 @@ namespace AssemblyRetrieval.PatternLisa.GeometricUtilities
 
                 if (CircumSphere.centerSphere == null)
                 {
-                    KLdebug.Print("CircumSphere.centerSphere nullo", "CircumPassingThrough.txt");
                 }
                 else if (CircumSphere.centerSphere != null)
                 {

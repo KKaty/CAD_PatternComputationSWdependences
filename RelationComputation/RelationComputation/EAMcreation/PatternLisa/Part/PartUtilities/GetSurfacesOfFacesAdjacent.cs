@@ -1,5 +1,4 @@
 ﻿using System.Collections.Generic;
-using AssemblyRetrieval.Debug;
 using AssemblyRetrieval.PatternLisa.ClassesOfObjects;
 using AssemblyRetrieval.PatternLisa.Functions_modifiedFromKatia;
 using SolidWorks.Interop.sldworks;
@@ -30,25 +29,9 @@ namespace AssemblyRetrieval.PatternLisa.Part.PartUtilities
                 return outputListOfSurfaces;
             }
 
-            const string fileNameBuildRepeatedEntity = "buildRepeatedEntity.txt";
-            KLdebug.Print("Numero di Facce adiacenti di questa faccia: " + listOfAdjacentFaces.Count.ToString(), fileNameBuildRepeatedEntity);
-            KLdebug.Print(" ", "buildRepeatedEntity.txt");
-
-            foreach (var face in listOfFacesToRemoveFromTheAdjacents)
-            {
-                KLdebug.Print("face id listOfFacesToRemoveFromTheAdjacents: " + face.GetFaceId(), fileNameBuildRepeatedEntity);
-            }
-            foreach (var face in listOfAdjacentFaces)
-            {
-                KLdebug.Print("face id listOfAdjacentFaces: " + face.GetFaceId(), fileNameBuildRepeatedEntity);
-            }
-            
-
-
+           
             listOfAdjacentFaces.RemoveAll(face => listOfFacesToRemoveFromTheAdjacents.FindIndex(facebis => face.GetFaceId() == facebis.GetFaceId()) != -1);
 
-            KLdebug.Print("Rimosso le altre facce della Repeated Entity da quelle da esaminare." +
-                              " Sono rimaste " + listOfAdjacentFaces.Count.ToString() + " facce.", fileNameBuildRepeatedEntity);
 
             #region stampa dati della superficie esaminata
             //var thisSurface = (Surface)inputFace.GetSurface();
@@ -92,19 +75,13 @@ namespace AssemblyRetrieval.PatternLisa.Part.PartUtilities
                 if (outputListOfSurfaces.FindIndex(surface => MyEqualsSurface(surface, newSurface, swApplWorks)) == -1)
                 {
                     outputListOfSurfaces.Add(newSurface);
-                    whatToWrite1 = string.Format("Trovata Nuova superficie: tipo superficie: {0}", newSurface.Identity());
-                    KLdebug.Print(whatToWrite1, fileNameBuildRepeatedEntity);
-                    KLdebug.Print(" ", fileNameBuildRepeatedEntity);
-
+                  
                     index++;
                 }
                 else
                 {
                     //var indexOfExistingSurface = outputListOfSurfaces.FindIndex(surface => myEqualsSurface(surface, newSurface));
-                    whatToWrite1 = string.Format("Trovata superficie per questa faccia di tipo {0} ma già trovata per questa faccia.", newSurface.Identity());
-                    KLdebug.Print(whatToWrite1, fileNameBuildRepeatedEntity);
-                    KLdebug.Print(" ", fileNameBuildRepeatedEntity);
-
+                    
                 }
             }
             return outputListOfSurfaces;
@@ -125,15 +102,10 @@ namespace AssemblyRetrieval.PatternLisa.Part.PartUtilities
 
             foreach (Face2 face in inputSetOfFaces)
             {
-                whatToWrite = string.Format(" ");
-                KLdebug.Print(whatToWrite, fileNameBuildRepeatedEntity);
-                whatToWrite = string.Format("NUOVA FACCIA di cui esaminiamo le superfici adiacenti");
-                KLdebug.Print(whatToWrite, fileNameBuildRepeatedEntity);
 
                 listOfSurfacesAdjacentToAFace.Clear();
 
                 listOfOtherFaces.Remove(face);
-                KLdebug.Print("listOfOtherFaces.Count = " + listOfOtherFaces.Count, fileNameBuildRepeatedEntity);
                 listOfSurfacesAdjacentToAFace = GetSurfacesOfFacesAdjacentToFace(face, listOfOtherFaces,
                     SwApplication);
 
@@ -159,11 +131,7 @@ namespace AssemblyRetrieval.PatternLisa.Part.PartUtilities
                             newListOfRepeatedEntityOfGroupingSurface);
                         listOfGroupingSurfaces.Add(newMyGroupingSurface);
 
-                        KLdebug.Print(" ", fileNameBuildRepeatedEntity);
-                        whatToWrite = string.Format("Ho aggiunto una nuova MyGroupingSurface di tipo: {0}",
-                            surface.Identity());
-                        KLdebug.Print(whatToWrite, fileNameBuildRepeatedEntity);
-
+                      
                         index++;
                     }
                     else
@@ -179,28 +147,13 @@ namespace AssemblyRetrieval.PatternLisa.Part.PartUtilities
 
                             indexbis++;
 
-
-                            KLdebug.Print(" ", fileNameBuildRepeatedEntity);
-                            whatToWrite = string.Format("Ho aggiornato una vecchia MyGroupingSurface di tipo: {0}",
-                                myGroupingSurfaceOfFound.groupingSurface.Identity());
-                            KLdebug.Print(whatToWrite, fileNameBuildRepeatedEntity);
                         }
                     }
                 }
 
-                KLdebug.Print(" ", fileNameBuildRepeatedEntity);
-                whatToWrite = string.Format("Ho aggiunto {0} superfici nuove per questa RepeatedEntity.", index);
-                KLdebug.Print(whatToWrite, fileNameBuildRepeatedEntity);
-
-                KLdebug.Print(" ", fileNameBuildRepeatedEntity);
-                whatToWrite = string.Format("Ho aggiornato {0} superfici vecchie per questa RepeatedEntity.",
-                    indexbis);
-                KLdebug.Print(whatToWrite, fileNameBuildRepeatedEntity);
-
                 listOfOtherFaces.Add(face);
             }
-            KLdebug.Print(" ", fileNameBuildRepeatedEntity);
-
+            
         }
 
 

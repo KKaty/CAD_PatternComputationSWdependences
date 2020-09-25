@@ -1,5 +1,4 @@
 ﻿using System.Collections.Generic;
-using AssemblyRetrieval.Debug;
 using AssemblyRetrieval.PatternLisa.ClassesOfObjects;
 
 namespace AssemblyRetrieval.PatternLisa.Assembly.AssemblyUtilities
@@ -12,24 +11,13 @@ namespace AssemblyRetrieval.PatternLisa.Assembly.AssemblyUtilities
             List<MyVertex> listOfOrigins, ref List<MyMatrAdj> listOfMatrAdj,
             ref List<MyPatternOfComponents> listOfOutputPattern, ref List<MyPatternOfComponents> listOfOutputPatternTwo)
         {
-            const string nameFile = "GetTranslationalPatterns.txt";
-            KLdebug.Print(" ", nameFile);
-            KLdebug.Print(" ", nameFile);
-            KLdebug.Print("             UPDATE STEP", nameFile);
-            KLdebug.Print("CURRENT SITUATION:", nameFile);
-            KLdebug.Print("listOfOutputPattern.Count = " + listOfOutputPattern.Count, nameFile);
-            KLdebug.Print("listOfOutputPatternTwo.Count = " + listOfOutputPatternTwo.Count, nameFile);
-            KLdebug.Print(" ", nameFile);
-
+            
             var lengthOfPattern = newPattern.listOfMyRCOfMyPattern.Count;
 
             // if lengthOfPattern = 2, I add the newPattern only if there is not another pattern in listOfOutputPatternTwo 
             // containing one of the two RE in the newPattern.
             if (lengthOfPattern == 2)
             {
-                KLdebug.Print(
-                    "Entrata per aggiornare con l'inserimento di un pattern di lunghezza lengthOfPattern = " +
-                    lengthOfPattern, nameFile);
 
                 int i = 0;
                 var addOrNot = true;
@@ -51,25 +39,16 @@ namespace AssemblyRetrieval.PatternLisa.Assembly.AssemblyUtilities
                 if (addOrNot == true)
                 {
                     listOfOutputPatternTwo.Add(newPattern);
-                    KLdebug.Print(
-                        "AGGIUNTO! Non ho trovato altri Pattern da 2 con intersezione non nulla con il corrente.",
-                        nameFile);
+                    
                 }
-                else
-                {
-                    KLdebug.Print("NON AGGIUNTO! Trovato altro Pattern da 2 che interseca questo.", nameFile);
-                }
+              
 
             }
             // if lengthOfPattern > 2, I add the newPattern and I update the other data
             // (aiming not to find pattern containing RE already set in this newPattern)
             else
             {
-                KLdebug.Print("Entrata nel lengthOfPattern = " + lengthOfPattern, nameFile);
-
                 listOfOutputPattern.Add(newPattern);
-                KLdebug.Print("AGGIUNTO (senza verifiche..)", nameFile);
-
                 UpdateOtherData_Assembly(newPattern, ref listOfPathOfPoints, listOfOrigins, ref listOfMatrAdj,
                    ref listOfOutputPatternTwo);
             }
@@ -239,9 +218,7 @@ namespace AssemblyRetrieval.PatternLisa.Assembly.AssemblyUtilities
         public static void UpdateListOfPatternTwo_Assembly(MyRepeatedComponent comp,
             ref List<MyPatternOfComponents> listOfOutputPatternTwo, int indOfThisOrigin)
         {
-            const string nameFile = "GetTranslationalPatterns.txt";
-            KLdebug.Print("     ---> UpdateListOfPatternTwo", nameFile);
-
+            
            var found = listOfOutputPatternTwo.Find(
                     pattern =>
                         pattern.listOfMyRCOfMyPattern.FindIndex(
@@ -249,27 +226,9 @@ namespace AssemblyRetrieval.PatternLisa.Assembly.AssemblyUtilities
             if (found != null)
             {
                 
-                KLdebug.Print(
-                    " Trovato pattern da 2 contenente la COMP corrente (posiz :" + indOfThisOrigin + "):", nameFile);
-                KLdebug.Print(" Lunghezza (deve essere 2): " + found.listOfMyRCOfMyPattern.Count, nameFile);
-                KLdebug.Print(" Posizione nella lista: " + listOfOutputPatternTwo.IndexOf(found), nameFile);
-                KLdebug.Print(
-                    " Origin 1^ RE nel pattern: (" + found.listOfMyRCOfMyPattern[0].Origin.x + "," +
-                    found.listOfMyRCOfMyPattern[0].Origin.y + "," + found.listOfMyRCOfMyPattern[0].Origin.z + ")",
-                    nameFile);
-                KLdebug.Print(
-                    " Origin 2^ RE nel pattern: (" + found.listOfMyRCOfMyPattern[1].Origin.x + "," +
-                    found.listOfMyRCOfMyPattern[1].Origin.y + "," + found.listOfMyRCOfMyPattern[1].Origin.z + ")",
-                    nameFile);
-                KLdebug.Print("(Uno di questi due origin deve essere quello della current COMP)", nameFile);
-
-
                 listOfOutputPatternTwo.Remove(found);
-                KLdebug.Print(" RIMOSSO dalla lista listOfOutputPatternTwo!", nameFile);
-
             }
-            KLdebug.Print(" ", nameFile);
-
+            
         }
 
         public static void KLUpdateListOfPatternTwo_Assembly(MyRepeatedComponent comp,

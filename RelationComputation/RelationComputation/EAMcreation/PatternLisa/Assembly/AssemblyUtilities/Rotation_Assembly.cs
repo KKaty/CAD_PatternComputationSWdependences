@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using AssemblyRetrieval.Debug;
 using AssemblyRetrieval.PatternLisa.ClassesOfObjects;
 using AssemblyRetrieval.PatternLisa.GeometricUtilities;
 using SolidWorks.Interop.sldworks;
@@ -269,13 +268,10 @@ namespace AssemblyRetrieval.PatternLisa.Assembly.AssemblyUtilities
             MyRepeatedComponent secondComponent, double teta, double[] axisDirection)
         {
             const string nameFile = "GetRotationalPatterns.txt";
-            var whatToWrite = "";
-            KLdebug.Print(" ", nameFile);
             int i = 0;
 
             while (i < 3)
             {
-                KLdebug.Print("Controllo del " + i + "-esimo versore", nameFile);
                 var firstVector = new MyVertex(
                     //firstComponent.Transform.RotationMatrix[i, 0],
                     //firstComponent.Transform.RotationMatrix[i, 1],
@@ -293,30 +289,19 @@ namespace AssemblyRetrieval.PatternLisa.Assembly.AssemblyUtilities
                     secondComponent.Transform.RotationMatrix[2, i]
                 );
 
-                whatToWrite = string.Format("Versore 1^ componente: ({0},{1},{2})", firstVector.x, firstVector.y, firstVector.z);
-                KLdebug.Print(whatToWrite, nameFile);
-                whatToWrite = string.Format("Versore 2^ componente: ({0},{1},{2})", secondVector.x, secondVector.y, secondVector.z);
-                KLdebug.Print(whatToWrite, nameFile);
-
+                
 
                 if (secondVector.IsRotationOf(firstVector, teta, axisDirection))
                 {
-                    KLdebug.Print(" -> Trovata corrispondenza per il versore " + i, nameFile);
                     i++;
                 }
                 else
                 {
-                    KLdebug.Print(" -> NON è stata trovata corrispondenza per il versore " + i, nameFile);
-                    KLdebug.Print("FINE", nameFile);
                     return false;
                 }
-                KLdebug.Print(" ", nameFile);
             }
 
-            KLdebug.Print(" ", nameFile);
-            KLdebug.Print("ANDATO A BUON FINE IL CONTROLLO DEI VERSORI PER QUESTE COMPONENTI.", nameFile);
-            KLdebug.Print(" ", nameFile);
-            KLdebug.Print(" ", nameFile);
+           
             return true;
            
         }
@@ -324,8 +309,6 @@ namespace AssemblyRetrieval.PatternLisa.Assembly.AssemblyUtilities
         public static bool IsRotationTwoComp180degrees_Assembly(MyRepeatedComponent firstComponent,
             MyRepeatedComponent secondComponent, out double[] axisDirectionVersor, ModelDoc2 SwModel, SldWorks SwApplication)
         {
-            const string nameFile = "GetRotationalPatterns.txt";
-            KLdebug.Print(" ", nameFile);
 
             //Rotation axis computation:
             //we need to find 2 vertices for each of the 2 components: 
@@ -337,9 +320,7 @@ namespace AssemblyRetrieval.PatternLisa.Assembly.AssemblyUtilities
             var originMeanPoint = new double[]{(firstComponent.Origin.x + secondComponent.Origin.x) / 2, 
                 (firstComponent.Origin.y + secondComponent.Origin.y) / 2, 
                 (firstComponent.Origin.z + secondComponent.Origin.z) / 2};
-            var whatToWrite1 = string.Format("originMeanPoint: ({0},{1},{2})", originMeanPoint[0], originMeanPoint[1], originMeanPoint[2]);
-            KLdebug.Print(whatToWrite1, nameFile);
-
+            
             //SwModel = (ModelDoc2)SwApplication.ActiveDoc;
             //SwModel.ClearSelection2(true);
             //SwModel.Insert3DSketch();
@@ -367,7 +348,6 @@ namespace AssemblyRetrieval.PatternLisa.Assembly.AssemblyUtilities
             var i = 0;
             while (FunctionsLC.MyEqualsArray(versorMeanPoint, originMeanPoint) && i<2)
             {
-                KLdebug.Print("versor non va bene!", nameFile);
                 i++;
 
                 xVersorCorrespondingPointFirst.SetValue(firstComponent.Origin.x + firstComponent.Transform.RotationMatrix[0, i],0);
@@ -382,8 +362,6 @@ namespace AssemblyRetrieval.PatternLisa.Assembly.AssemblyUtilities
                 versorMeanPoint.SetValue((xVersorCorrespondingPointFirst[1] + xVersorCorrespondingPointSecond[1]) / 2,1);
                 versorMeanPoint.SetValue((xVersorCorrespondingPointFirst[2] + xVersorCorrespondingPointSecond[2]) / 2,2);
             };
-            whatToWrite1 = string.Format("versorMeanPoint: ({0},{1},{2})", versorMeanPoint[0], versorMeanPoint[1], versorMeanPoint[2]);
-            KLdebug.Print(whatToWrite1, nameFile);
             //SwModel = (ModelDoc2)SwApplication.ActiveDoc;
             //SwModel.ClearSelection2(true);
             //SwModel.Insert3DSketch();
@@ -392,14 +370,9 @@ namespace AssemblyRetrieval.PatternLisa.Assembly.AssemblyUtilities
 
             var axisDirectionVector = new double[] { originMeanPoint[0] - versorMeanPoint[0], originMeanPoint[1] - versorMeanPoint[1], 
                 originMeanPoint[2] - versorMeanPoint[2] };
-            whatToWrite1 = string.Format("Direzione asse di rotazione non normalizzato: ({0},{1},{2})", axisDirectionVector[0], axisDirectionVector[1], axisDirectionVector[2]);
-            KLdebug.Print(whatToWrite1, nameFile);
-
+          
             axisDirectionVersor = GeometricUtilities.FunctionsLC.Normalize(axisDirectionVector);
-            whatToWrite1 = string.Format("Direzione asse di rotazione: ({0},{1},{2})", axisDirectionVersor[0], axisDirectionVersor[1], axisDirectionVersor[2]);
-            KLdebug.Print(whatToWrite1, nameFile);
             var teta = Math.PI; // the angle is fixed at 180°
-            KLdebug.Print("Teta: " + teta, nameFile);
 
             // Now i got the direction axis and the the rotation angle: I use the existing verifying function
             return IsRotationTwoComp_Assembly(firstComponent, secondComponent, teta, axisDirectionVersor);

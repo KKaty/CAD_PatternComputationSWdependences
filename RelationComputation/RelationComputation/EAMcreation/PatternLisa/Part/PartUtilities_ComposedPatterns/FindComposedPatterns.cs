@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using AssemblyRetrieval.Debug;
 using AssemblyRetrieval.PatternLisa.ClassesOfObjects;
 using AssemblyRetrieval.PatternLisa.GeometricUtilities;
 using SolidWorks.Interop.sldworks;
@@ -19,10 +18,7 @@ namespace AssemblyRetrieval.PatternLisa.Part.PartUtilities_ComposedPatterns
             SldWorks mySwApplication, ref StringBuilder fileOutput)
 
         {
-            var nameFile = "ComposedPatterns.txt";
-            KLdebug.Print("", nameFile);
-            KLdebug.Print("-- RAGGRUPPAMENTO DEI PATTERN TROVATI:", nameFile);
-
+            
             var toleranceOk = true;
             var listOfComposedPattern = new List<MyComposedPattern>();
             var listOfComposedPatternTwo = new List<MyComposedPattern>();
@@ -35,12 +31,7 @@ namespace AssemblyRetrieval.PatternLisa.Part.PartUtilities_ComposedPatterns
                     listOfGroupingSurfaceForPatterns[0].listOfPatternsLine,
                     listOfGroupingSurfaceForPatterns[0].listOfPatternsCircum);
                 listOfGroupingSurfaceForPatterns.RemoveAt(0);
-                KLdebug.Print("", nameFile);
-                KLdebug.Print("", nameFile);
-                KLdebug.Print("CURRENT SURFACE OF TYPE: " + currentGroupingSurfaceForPatterns.groupingSurface.Identity(), nameFile);
-                KLdebug.Print("(Al momento sono rimaste " + listOfGroupingSurfaceForPatterns.Count +
-                    " superfici, compresa questa.)", nameFile);
-
+               
                 fileOutput.AppendLine("");
                 fileOutput.AppendLine("NUOVA SURFACE OF TYPE: " + currentGroupingSurfaceForPatterns.groupingSurface.Identity());
                 fileOutput.AppendLine("(Al momento sono rimaste ancora " + listOfGroupingSurfaceForPatterns.Count +
@@ -52,7 +43,6 @@ namespace AssemblyRetrieval.PatternLisa.Part.PartUtilities_ComposedPatterns
                     currentGroupingSurfaceForPatterns.listOfPatternsLine, mySwApplication);
                 if (listOfListsOfCoherentPatternsLine.Count == 0)
                 {
-                    KLdebug.Print("-- Nessun pattern LINEA da esaminare per pattern composti!", nameFile);                  
                 }
 
                 //Then I group coherent patterns in subgroups of parallel patterns:
@@ -72,13 +62,8 @@ namespace AssemblyRetrieval.PatternLisa.Part.PartUtilities_ComposedPatterns
                             //the 2 patterns are not parallel, I verify if it is REFLECTION:
                             if (numOfListsOfParallelPatterns == 0)
                             {
-                                KLdebug.Print("   >>>> SOLO 2 PATTERN su questa GS: POTREBBE ESSERE RIFLESSIONE", nameFile);
-                                KLdebug.Print("       INFATTI HO " + numOfListsOfParallelPatterns +
-                                    "LISTA DI PATTERN PARALLELI", nameFile);
                                 if (IsReflectionTwoPatterns(list[0], list[1]))
                                 {
-                                    KLdebug.Print("I 2 Pattern sono legate da RIFLESSIONE!", nameFile);
-
                                     var typeOfNewComposedPattern = "Composed REFLECTION of length 2";
                                     BuildNewComposedPatternOfLength2(fileOutput, typeOfNewComposedPattern,
                                         ref listOfComposedPattern, ref listOfComposedPatternTwo,
@@ -90,13 +75,8 @@ namespace AssemblyRetrieval.PatternLisa.Part.PartUtilities_ComposedPatterns
                             //if a composed pattern does not exist yet AND
                             //the 2 patterns are parallel, I verify if it is TRANSLARION:
                             {
-                                KLdebug.Print("   >>>> SOLO 2 PATTERN su questa GS: POTREBBE ESSERE TRASLAZIONE", nameFile);
-                                KLdebug.Print("       INFATTI HO " + numOfListsOfParallelPatterns +
-                                    "LISTA DI PATTERN PARALLELI", nameFile);
                                 if (IsTranslationTwoPatterns(list[0], list[1]))
                                 {
-                                    KLdebug.Print("I 2 Pattern sono legate da TRASLAZIONE!", nameFile);
-
                                     var typeOfNewComposedPattern = "Composed TRANSLATION of length 2";
                                     BuildNewComposedPatternOfLength2(fileOutput, typeOfNewComposedPattern,
                                         ref listOfComposedPattern, ref listOfComposedPatternTwo,
@@ -104,55 +84,36 @@ namespace AssemblyRetrieval.PatternLisa.Part.PartUtilities_ComposedPatterns
                                 }
                                 else
                                 {
-                                    KLdebug.Print("   >>>> NON è TRASLAZIONE: POTREBBE ESSERE RIFLESSIONE", nameFile);
                                     if (IsReflectionTwoPatterns(list[0], list[1]))
                                     {
-                                        KLdebug.Print("I 2 Pattern sono legate da RIFLESSIONE!", nameFile);
-
                                         var typeOfNewComposedPattern = "Composed REFLECTION of length 2";
                                         BuildNewComposedPatternOfLength2(fileOutput, typeOfNewComposedPattern,
                                             ref listOfComposedPattern, ref listOfComposedPatternTwo,
                                             ref listOfGroupingSurfaceForPatterns, list);
                                     }
-                                    else
-                                    {
-                                        KLdebug.Print("Nessuna relazione tra questi 2 pattern.", nameFile);
-                                    }
+                                 
                                 }
 
                             }
                         }
-                        else
-                        {
-                            KLdebug.Print("Un composed pattern con questi pattern era già stato trovato!", nameFile);
-                            KLdebug.Print("NON FACCIO NIENTE!", nameFile);
-                        }
+                        
                     }
                     else
                     {
 
                         foreach (var listOfParallelPatterns in listOfListsOfParallelPatterns)
                         {
-                            KLdebug.Print("   ---> NUOVO SET DI " + listOfParallelPatterns.Count + " PATTERN LINEA PARALLELI", nameFile);
-
                             if (listOfParallelPatterns.Count == 2)
                             {
                                 //I verify if a composed pattern with these 2 patterns has already been created
                                 //in another GS:
                                 if (ComposedPatternOfLength2AlreadyExists(listOfComposedPatternTwo, list))
                                 {
-                                    KLdebug.Print(
-                                        "Un composed pattern con questi pattern era già stato trovato!", nameFile);
-                                    KLdebug.Print("NON FACCIO NIENTE!", nameFile);
                                 }
                                 else
                                 {
-                                    KLdebug.Print(
-                                        "        >>>> QUESTO GRUPPO CONTIENE SOLO 2 PATTERN PARALLELI:", nameFile);
                                     if (IsTranslationTwoPatterns(listOfParallelPatterns[0], listOfParallelPatterns[1]))
                                     {
-                                        KLdebug.Print("I 2 Pattern sono legate da TRASLAZIONE!", nameFile);
-
                                         var typeOfNewComposedPattern = "Composed TRANSLATION of length 2";
                                         BuildNewComposedPatternOfLength2(fileOutput, typeOfNewComposedPattern,
                                             ref listOfComposedPattern, ref listOfComposedPatternTwo,
@@ -160,27 +121,19 @@ namespace AssemblyRetrieval.PatternLisa.Part.PartUtilities_ComposedPatterns
                                     }
                                     else
                                     {
-                                        KLdebug.Print("   >>>> NON è TRASLAZIONE: POTREBBE ESSERE RIFLESSIONE", nameFile);
                                         if (IsReflectionTwoPatterns(list[0], list[1]))
                                         {
-                                            KLdebug.Print("I 2 Pattern sono legate da RIFLESSIONE!", nameFile);
-
                                             var typeOfNewComposedPattern = "Composed REFLECTION of length 2";
                                             BuildNewComposedPatternOfLength2(fileOutput, typeOfNewComposedPattern,
                                                 ref listOfComposedPattern, ref listOfComposedPatternTwo,
                                                 ref listOfGroupingSurfaceForPatterns, list);
                                         }
-                                        else
-                                        {
-                                            KLdebug.Print("Nessuna relazione tra questi 2 pattern.", nameFile);
-                                        }
+                                        
                                     }
                                 }
                             }
                             else //(listOfParallelPatterns.Count > 2)
                             {
-                                KLdebug.Print("   >>>> PIU' DI 2 PATTERN su questa GS: APPLICO IL PATH DETECTION ALGORITHM", nameFile);
-
                                 var listOfPatternCentroids = listOfParallelPatterns.Select(pattern => pattern.patternCentroid).ToList();
                                 fileOutput.AppendLine("");
                                 fileOutput.AppendLine("        >>>> CREATION OF ADJECENCY MATRICES FOR COMPOSED PATTERNS:");
@@ -196,10 +149,6 @@ namespace AssemblyRetrieval.PatternLisa.Part.PartUtilities_ComposedPatterns
                                     //soprattutto nel caso in cui si presenta onlyShortPath = true
                                     //(non avrebbe senso cancellarla, ma conservarla per la ricerca di path
                                     //di 2 RE).
-                                    KLdebug.Print("----> Considero NUOVA MatrAdj. Sono rimaste ancora " +
-                                                          listOfMyMatrAdj.Count +
-                                                          " MatrAdj da controllare.", nameFile);
-                                    KLdebug.Print(" ", nameFile);
                                     List<MyPathOfPoints> listOfPathsOfCentroids;
                                     bool onlyShortPaths;
                                     maxPath = PathCreation_Part_ComposedPatterns.Functions.FindPaths_ComposedPatterns(currentMatrAdj,
@@ -208,13 +157,6 @@ namespace AssemblyRetrieval.PatternLisa.Part.PartUtilities_ComposedPatterns
                                         ref listOfMyMatrAdj,
                                         ref listOfGroupingSurfaceForPatterns, ref listOfComposedPattern,
                                         ref listOfComposedPatternTwo, mySwApplication);
-                                    KLdebug.Print(" ", nameFile);
-                                    KLdebug.Print("PER QUESTA MATRADJ prima della ricerca 'ufficiale' di pattern': ", nameFile);
-                                    KLdebug.Print("maxPath = " + maxPath, nameFile);
-                                    KLdebug.Print("listOfMyPattern.Count = " + listOfComposedPattern.Count, nameFile);
-                                    KLdebug.Print("listOfMyPatternTwo.Count = " + listOfComposedPatternTwo.Count, nameFile);
-                                    KLdebug.Print("onlyShortPath = " + onlyShortPaths, nameFile);
-                                    KLdebug.Print("toleranceOK = " + toleranceOk, nameFile);
                                     //fileOutput.AppendLine("listOfPathOfCentroids.Count = " + listOfPathOfCentroids.Count, nameFile);
 
                                     if (toleranceOk)
@@ -236,15 +178,6 @@ namespace AssemblyRetrieval.PatternLisa.Part.PartUtilities_ComposedPatterns
                                                 }
                                             }
                                         }
-                                        else
-                                        {
-                                            KLdebug.Print("NO PATH FOUND!", nameFile);
-                                        }
-                                    }
-                                    else
-                                    {
-                                        KLdebug.Print(
-                                            "===>>    TOLLERANZA NON SUFFICIENTEMENTE PICCOLA. TERMINATO.", nameFile);
                                     }
                                 }
                             }
@@ -252,13 +185,7 @@ namespace AssemblyRetrieval.PatternLisa.Part.PartUtilities_ComposedPatterns
 
                         //Now coherent linear patterns that have not been set in a composed pattern yet
                         //are examined to see if they consitute any rotation composed pattern:
-                        KLdebug.Print("", nameFile);
-                        KLdebug.Print("--->> FINE DEL CONTROLLO SU PATTERN LINEARI PARALLELI", nameFile);
-                        KLdebug.Print("", nameFile);
-                        KLdebug.Print("", nameFile);
-                        KLdebug.Print("--->> PASSO ALLA RICERCA DI PATTERN LINEARI IN PATTERN COMPOSTO ROTAZIONALE", nameFile);
-                        KLdebug.Print("lista di pattern coerenti corrente. Count = " + list.Count, nameFile);
-
+                        
                         list.RemoveAll(
                             pattern =>
                                 listOfComposedPattern.FindIndex(
@@ -266,7 +193,6 @@ namespace AssemblyRetrieval.PatternLisa.Part.PartUtilities_ComposedPatterns
                                         composedPattern.listOfMyPattern.FindIndex(
                                             patternInComposedPattern =>
                                                 patternInComposedPattern.idMyPattern == pattern.idMyPattern)!= -1)!=-1);
-                        KLdebug.Print("Rimuovo dalla lista di pattern coerenti quelli già sistemati. Nuovo Count = " + list.Count, nameFile);
                         if (list.Count != 0)
                         {
                             if (list.Count == 2)
@@ -277,27 +203,18 @@ namespace AssemblyRetrieval.PatternLisa.Part.PartUtilities_ComposedPatterns
                                 //in another GS:
                                 if (ComposedPatternOfLength2AlreadyExists(listOfComposedPatternTwo, list))
                                 {
-                                    KLdebug.Print(
-                                        "Un composed pattern con questi pattern era già stato trovato!", nameFile);
-                                    KLdebug.Print("NON FACCIO NIENTE!", nameFile);
                                 }
                                 else
                                 {
-                                    KLdebug.Print(
-                                        "        >>>> QUESTO GRUPPO CONTIENE SOLO 2 PATTERN PARALLELI:", nameFile);
                                     if (IsReflectionTwoPatterns(list[0], list[1]))
                                     {
-                                        KLdebug.Print("I 2 Pattern sono legate da RIFLESSIONE!", nameFile);
-
+                        
                                         var typeOfNewComposedPattern = "Composed REFLECTION of length 2";
                                         BuildNewComposedPatternOfLength2(fileOutput, typeOfNewComposedPattern,
                                             ref listOfComposedPattern, ref listOfComposedPatternTwo,
                                             ref listOfGroupingSurfaceForPatterns, list);
                                     }
-                                    else
-                                    {
-                                        KLdebug.Print("Nessuna relazione tra questi pattern.", nameFile);
-                                    }
+                                    
                                 }
                             }
                             else
@@ -317,10 +234,6 @@ namespace AssemblyRetrieval.PatternLisa.Part.PartUtilities_ComposedPatterns
                                     //soprattutto nel caso in cui si presenta onlyShortPath = true
                                     //(non avrebbe senso cancellarla, ma conservarla per la ricerca di path
                                     //di 2 RE).
-                                    KLdebug.Print("----> Considero NUOVA MatrAdj. Sono rimaste ancora " +
-                                                      listOfMyMatrAdj1.Count +
-                                                      " MatrAdj da controllare.", nameFile);
-                                    KLdebug.Print(" ", nameFile);
                                     List<MyPathOfPoints> listOfPathsOfCentroids1;
                                     bool onlyShortPaths1;
 
@@ -354,42 +267,22 @@ namespace AssemblyRetrieval.PatternLisa.Part.PartUtilities_ComposedPatterns
                                                 }
                                             }
                                         }
-                                        else
-                                        {
-                                            KLdebug.Print("NO PATH FOUND!", nameFile);
-                                        }
-                                    }
-                                    else
-                                    {
-                                        KLdebug.Print(
-                                            "===>>    TOLLERANZA NON SUFFICIENTEMENTE PICCOLA. TERMINATO.",
-                                            nameFile);
                                     }
                                 }
 
                             }
                         }
-                        else
-                        {
-                            KLdebug.Print("--> NON CI SONO ALTRI PATTERN DA CONSIDERARE ", nameFile);
-                        }
-
+                       
                     }
 
                 }
-                KLdebug.Print("--> PASSO AI CIRCOLARI", nameFile);
-                KLdebug.Print("", nameFile);
-
+                
                 // >>>>>>> CIRCULAR CASE:
                 #region da rivedere
                 //first I group patterns by same length and same distance:
                 var listOfListsOfCoherentPatternsCircum = GroupFoundPatternsOfTypeCircum(
                     currentGroupingSurfaceForPatterns.listOfPatternsCircum, mySwApplication);
-                if (listOfListsOfCoherentPatternsCircum.Count == 0)
-                {
-                    KLdebug.Print("-- Nessun pattern CIRCONFERENZA da esaminare per pattern composti!", nameFile);
-                }
-
+                
                 //Then I group coherent patterns in subgroups of patterns:
                 foreach (var list in listOfListsOfCoherentPatternsCircum)
                 {
@@ -400,21 +293,14 @@ namespace AssemblyRetrieval.PatternLisa.Part.PartUtilities_ComposedPatterns
                     {
                         if (listOfPatternsWithSameCenterAndPlane.Count == 2)
                         {
-                            KLdebug.Print(
-                                        "        >>>> QUESTO GRUPPO CONTIENE SOLO 2 PATTERN circonf compatibili:", nameFile);
                             if (IsTranslationTwoPatterns(listOfPatternsWithSameCenterAndPlane[0], listOfPatternsWithSameCenterAndPlane[1]))
                             {
-                                KLdebug.Print("I 2 Pattern sono PATTERN COMPOSTO CONCENTRICO!", nameFile);
-
                                 var typeOfNewComposedPattern = "Composed ROTATIONAL (same center) of length 2";
                                 BuildNewComposedPatternOfLength2(fileOutput, typeOfNewComposedPattern,
                                     ref listOfComposedPattern, ref listOfComposedPatternTwo,
                                     ref listOfGroupingSurfaceForPatterns, listOfPatternsWithSameCenterAndPlane);
                             }
-                            else
-                            {
-                                KLdebug.Print("Nessuna relazione tra questi pattern.", nameFile);
-                            }
+                            
                         }
                         else //listOfPatternsWithSameCenterAndPlane.Count > 2
                         {
@@ -507,25 +393,15 @@ namespace AssemblyRetrieval.PatternLisa.Part.PartUtilities_ComposedPatterns
         //to their path). It returns TRUE if they do, FALSE otherwise.
         public static bool AreCollinear(MyPattern first, MyPattern second)
         {
-            var nameFile = "ComposedPatterns.txt";
-            KLdebug.Print("", nameFile);
-            KLdebug.Print("ARE COLLINEAR?", nameFile);
-
             var firstLine = (MyLine)first.pathOfMyPattern;
-            KLdebug.Print("primo centroide del 2° pattern sta sulla retta del 1° pattern? " + 
-                second.listOfMyREOfMyPattern[0].centroid.Lieonline(firstLine), nameFile);
-            KLdebug.Print("secondo centroide del 2° pattern sta sulla retta del 1° pattern? " +
-                second.listOfMyREOfMyPattern[1].centroid.Lieonline(firstLine), nameFile);
-
+          
             if (second.listOfMyREOfMyPattern[0].centroid.Lieonline(firstLine) &&
                 second.listOfMyREOfMyPattern[1].centroid.Lieonline(firstLine))
             {
-                KLdebug.Print("I due pattern da " + first.listOfMyREOfMyPattern.Count + "RE sono COLLINEARI", nameFile);
                 return true;
             }
             else
             {
-                KLdebug.Print("I due pattern da " + first.listOfMyREOfMyPattern.Count + "RE NON sono COLLINEARI", nameFile);
                 return false;
             }
         }
@@ -539,10 +415,7 @@ namespace AssemblyRetrieval.PatternLisa.Part.PartUtilities_ComposedPatterns
             var listOfListsOfPatterns = new List<List<MyPattern>>();
             foreach (var pattern in listOfPatternsOfTypeLine)
             {
-                KLdebug.Print("", nameFile);
-                KLdebug.Print("--- Classifico pattern di tipo " + pattern.typeOfMyPattern + ", lunghezza = " + pattern.listOfMyREOfMyPattern.Count + 
-                    ", constDistance = " + pattern.constStepOfMyPattern, nameFile);
-
+             
                 var indexOfFind = listOfListsOfPatterns.FindIndex(list => (list[0].listOfMyREOfMyPattern.Count ==
                     pattern.listOfMyREOfMyPattern.Count && Math.Abs(list[0].constStepOfMyPattern - pattern.constStepOfMyPattern)<tolerance));
                 //var indexOfFind1 = listOfListsOfPatterns.FindIndex(list => (list[0].listOfMyREOfMyPattern.Count == 
@@ -553,7 +426,6 @@ namespace AssemblyRetrieval.PatternLisa.Part.PartUtilities_ComposedPatterns
 
                 if (indexOfFind != -1)
                 {
-                    KLdebug.Print("     AGGIORNATA LISTA ESISTENTE che conteneva già " + listOfListsOfPatterns[indexOfFind].Count + " elementi.", nameFile);
                     //The list referred to patterns with same RE number and same constant step already exists. I add it to the corresponding list:
                     listOfListsOfPatterns[indexOfFind].Add(pattern);
                 }
@@ -562,18 +434,9 @@ namespace AssemblyRetrieval.PatternLisa.Part.PartUtilities_ComposedPatterns
                     //The list referred to patterns with same RE number and same constant step does not exist yet. I create it:
                     List<MyPattern> newListOfPatterns = new List<MyPattern> { pattern };
                     listOfListsOfPatterns.Add(newListOfPatterns);
-                    KLdebug.Print("     CREATA NUOVA LISTA", nameFile);
                 }
             }
-            KLdebug.Print("", nameFile);
-            KLdebug.Print("TERMINE della creazione delle liste di pattern linea.", nameFile);
-            KLdebug.Print("Ci sono " + listOfListsOfPatterns.Count + " liste", nameFile);
-            KLdebug.Print("Ora elimino quelle con solo una occorrenza:", nameFile);
             listOfListsOfPatterns.RemoveAll(list => list.Count < 2);
-            KLdebug.Print("Ora ci sono " + listOfListsOfPatterns.Count + " liste.", nameFile);
-            KLdebug.Print("TERMINE.", nameFile);
-            KLdebug.Print("", nameFile);
-
             return listOfListsOfPatterns;
         }
 
@@ -586,16 +449,10 @@ namespace AssemblyRetrieval.PatternLisa.Part.PartUtilities_ComposedPatterns
             var listOfListsOfPatterns = new List<List<MyPattern>>();
             foreach (var pattern in listOfPatternsOfTypeCircum)
             {
-                KLdebug.Print("", nameFile);
-                KLdebug.Print(
-                    "--- Classifico pattern di tipo " + pattern.typeOfMyPattern + ", lunghezza = " +
-                    pattern.listOfMyREOfMyPattern.Count + " angle = " + pattern.angle, nameFile);
-
                 var indexOfFind = listOfListsOfPatterns.FindIndex(list => (list[0].listOfMyREOfMyPattern.Count ==
-                    pattern.listOfMyREOfMyPattern.Count && Math.Abs(list[0].angle - pattern.angle) < tolerance));
+                                                                           pattern.listOfMyREOfMyPattern.Count && Math.Abs(list[0].angle - pattern.angle) < tolerance));
                 if (indexOfFind != -1)
                 {
-                    KLdebug.Print("     AGGIORNATA LISTA ESISTENTE che conteneva già " + listOfListsOfPatterns[indexOfFind].Count + " elementi.", nameFile);
                     //The list referred to patterns with same RE number and same constant step already exists. I add it to the corresponding list:
                     listOfListsOfPatterns[indexOfFind].Add(pattern);
                 }
@@ -604,17 +461,10 @@ namespace AssemblyRetrieval.PatternLisa.Part.PartUtilities_ComposedPatterns
                     //The list referred to patterns with same RE number and same constant step does not exist yet. I create it:
                     List<MyPattern> newListOfPatterns = new List<MyPattern> { pattern };
                     listOfListsOfPatterns.Add(newListOfPatterns);
-                    KLdebug.Print("     CREATA NUOVA LISTA", nameFile);
                 }
             }
-            KLdebug.Print("", nameFile);
-            KLdebug.Print("TERMINE della creazione delle liste di pattern circonferenza.", nameFile);
-            KLdebug.Print("Ci sono " + listOfListsOfPatterns.Count + " liste", nameFile);
-            KLdebug.Print("Ora elimino quelle con solo una occorrenza:", nameFile);
             listOfListsOfPatterns.RemoveAll(list => list.Count < 2);
-            KLdebug.Print("Ora ci sono " + listOfListsOfPatterns.Count + " liste.", nameFile);
-            KLdebug.Print("", nameFile);
-
+            
             return listOfListsOfPatterns;
         }
 
@@ -626,9 +476,6 @@ namespace AssemblyRetrieval.PatternLisa.Part.PartUtilities_ComposedPatterns
             var listOfListsOfPatternsWithSameCenterPlane = new List<List<MyPattern>>();
             foreach (var pattern in listsOfCircumPatterns)
             {
-                KLdebug.Print("", nameFile);
-                KLdebug.Print(">>> Suddivisione in pattern con centro e piano coerenti:", nameFile);
-
                 var circumThisPattern = (MyCircumForPath)pattern.pathOfMyPattern;
                 var commonCenter = circumThisPattern.circumcenter;
                 var commonPlane = circumThisPattern.circumplane;
@@ -640,9 +487,6 @@ namespace AssemblyRetrieval.PatternLisa.Part.PartUtilities_ComposedPatterns
                             ((MyCircumForPath) list[0].pathOfMyPattern).circumplane.Equals(commonPlane));
                 if (indexOfFind != -1)
                 {
-                    var whatToWrite = string.Format("     Trovata LISTA di pattern ESISTENTE con {0} elementi.",
-                        listOfListsOfPatternsWithSameCenterPlane[indexOfFind].Count);
-                    KLdebug.Print(whatToWrite, nameFile);
                     //The list already exists. I add it to the corresponding list:
                     listOfListsOfPatternsWithSameCenterPlane[indexOfFind].Add(pattern);
                 }
@@ -651,20 +495,9 @@ namespace AssemblyRetrieval.PatternLisa.Part.PartUtilities_ComposedPatterns
                     //The list does not exist yet. I create it:
                     List<MyPattern> newListOfPatterns = new List<MyPattern> { pattern };
                     listOfListsOfPatternsWithSameCenterPlane.Add(newListOfPatterns);
-                    var whatToWrite =
-                        string.Format("     CREATA NUOVA LISTA di pattern con centro e piano");
-                    KLdebug.Print(whatToWrite, nameFile);
                 }
             }
-            KLdebug.Print("", nameFile);       
-            KLdebug.Print("", nameFile);
-            KLdebug.Print("TERMINE della creazione delle liste di pattern circ stesso centro e piano.", nameFile);
-            KLdebug.Print("Ci sono " + listOfListsOfPatternsWithSameCenterPlane.Count + " liste", nameFile);
-            KLdebug.Print("Ora elimino quelle con solo una occorrenza:", nameFile);
             listOfListsOfPatternsWithSameCenterPlane.RemoveAll(list => list.Count < 2);
-            KLdebug.Print("Ora ci sono " + listOfListsOfPatternsWithSameCenterPlane.Count + " liste.", nameFile);
-            KLdebug.Print("TERMINE.", nameFile);
-            KLdebug.Print("", nameFile);
 
             return listOfListsOfPatternsWithSameCenterPlane;
         }
@@ -677,8 +510,6 @@ namespace AssemblyRetrieval.PatternLisa.Part.PartUtilities_ComposedPatterns
             var listOfListsOfParallelPatterns = new List<List<MyPattern>>();
             foreach (var pattern in listsOfLinePatterns)
             {
-                KLdebug.Print("", nameFile);
-
                 var lineThisPattern = (MyLine)pattern.pathOfMyPattern;
                 var invertedDirectionThisPattern = new double[3];
                 invertedDirectionThisPattern.SetValue(-lineThisPattern.direction[0],0);
@@ -694,7 +525,6 @@ namespace AssemblyRetrieval.PatternLisa.Part.PartUtilities_ComposedPatterns
                     var whatToWrite = string.Format("     AGGIORNATA LISTA di pattern ESISTENTE con direzione ({0},{1},{2})", 
                         ((MyLine)pattern.pathOfMyPattern).direction[0], ((MyLine)pattern.pathOfMyPattern).direction[1], 
                         ((MyLine)pattern.pathOfMyPattern).direction[2]);                        
-                    KLdebug.Print(whatToWrite, nameFile);
                     //The list already exists. I add it to the corresponding list:
                     listOfListsOfParallelPatterns[indexOfFind].Add(pattern);
                 }
@@ -706,19 +536,11 @@ namespace AssemblyRetrieval.PatternLisa.Part.PartUtilities_ComposedPatterns
                     var whatToWrite = string.Format("     CREATA NUOVA LISTA di pattern linea paralleli con direzione ({0},{1},{2})",
                         ((MyLine)pattern.pathOfMyPattern).direction[0], ((MyLine)pattern.pathOfMyPattern).direction[1],
                         ((MyLine)pattern.pathOfMyPattern).direction[2]);
-                    KLdebug.Print(whatToWrite, nameFile);
                 }
             }
 
-            KLdebug.Print("", nameFile);
-            KLdebug.Print("TERMINE della creazione delle liste di pattern paralleli.", nameFile);
-            KLdebug.Print("Ci sono " + listOfListsOfParallelPatterns.Count + " liste", nameFile);
-            KLdebug.Print("Ora elimino quelle con solo una occorrenza:", nameFile);
             listOfListsOfParallelPatterns.RemoveAll(list => list.Count < 2);
-            KLdebug.Print("Ora ci sono " + listOfListsOfParallelPatterns.Count + " liste.", nameFile);
-            KLdebug.Print("TERMINE.", nameFile);
-            KLdebug.Print("", nameFile);
-
+   
             return listOfListsOfParallelPatterns;
         }
 

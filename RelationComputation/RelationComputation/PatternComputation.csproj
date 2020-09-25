@@ -67,7 +67,6 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="AssemblyTraverse.cs" />
-    <Compile Include="Debug\KLdebug.cs" />
     <Compile Include="EAMcreation\PatternLisa\Assembly\AssemblyUtilities\CheckAndUpdate_Assembly.cs" />
     <Compile Include="EAMcreation\PatternLisa\Assembly\AssemblyUtilities\FindPatternsOfComponents.cs" />
     <Compile Include="EAMcreation\PatternLisa\Assembly\AssemblyUtilities\GetPatternsFromListOfPaths_Assembly.cs" />
@@ -158,6 +157,7 @@
   <ItemGroup>
     <None Include="App.config" />
   </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.

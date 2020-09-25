@@ -1,5 +1,4 @@
-﻿using AssemblyRetrieval.Debug;
-using AssemblyRetrieval.PatternLisa.ClassesOfObjects;
+﻿using AssemblyRetrieval.PatternLisa.ClassesOfObjects;
 
 namespace AssemblyRetrieval.PatternLisa.GeometricUtilities
 {
@@ -23,13 +22,10 @@ namespace AssemblyRetrieval.PatternLisa.GeometricUtilities
 
             if (FunctionsLC.MyEqualsArray(firstDirection, secondDirection) || FunctionsLC.MyEqualsArray(firstDirection, secondDirectionInverted))
             {
-                KLdebug.Print("direzioni uguali", "prova.txt");
 
                 var firstVerify = firstPoint.Lieonline(secondLine);
                 var secondVerify = secondPoint.Lieonline(firstLine);
-                KLdebug.Print("firstVerify of point " + firstVerify, "prova.txt");
-                KLdebug.Print("secondVerify of point" + secondVerify, "prova.txt");
-                if (firstPoint.Lieonline(secondLine) && secondPoint.Lieonline(firstLine))
+               if (firstPoint.Lieonline(secondLine) && secondPoint.Lieonline(firstLine))
                 {             
                     return true;
                 }

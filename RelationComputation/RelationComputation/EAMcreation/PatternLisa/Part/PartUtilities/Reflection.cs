@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using AssemblyRetrieval.Debug;
 using AssemblyRetrieval.PatternLisa.ClassesOfObjects;
 using AssemblyRetrieval.PatternLisa.GeometricUtilities;
 using SolidWorks.Interop.sldworks;
@@ -280,20 +279,12 @@ namespace AssemblyRetrieval.PatternLisa.Part.PartUtilities
         public static bool CheckOfCylindersForReflection(MyRepeatedEntity firstMyRepeatedEntity, MyRepeatedEntity secondMyRepeatedEntity, MyPlane candidateReflMyPlane)
         {
 
-            const string nameFile = "GetReflectionalPattern.txt";
-            KLdebug.Print(" ", nameFile);
-            KLdebug.Print("------>> CHECK DELLE FACCE CILINDRICHE:", nameFile);
-
             var numOfCylinderSurfacesFirst = firstMyRepeatedEntity.listOfCylindricalSurfaces.Count;
             var numOfCylinderSurfacesSecond = secondMyRepeatedEntity.listOfCylindricalSurfaces.Count;
 
             if (numOfCylinderSurfacesFirst == numOfCylinderSurfacesSecond)
             {
-                KLdebug.Print("Numero di facce CILINDRICHE prima RE: " + numOfCylinderSurfacesFirst, nameFile);
-                KLdebug.Print("Numero di facce CILINDRICHE seconda RE: " + numOfCylinderSurfacesSecond, nameFile);
-                KLdebug.Print("Il numero di facce cilidriche corrisponde, passo alla verifica geometrica:", nameFile);
-                KLdebug.Print(" ", nameFile);
-
+            
                 if (numOfCylinderSurfacesFirst > 0)
                 {
                     var listOfCylindersToLookIn = new List<MyCylinder>(secondMyRepeatedEntity.listOfCylindricalSurfaces);
@@ -301,7 +292,6 @@ namespace AssemblyRetrieval.PatternLisa.Part.PartUtilities
                     while (listOfCylindersToLookIn.Count != 0 && i < numOfCylinderSurfacesFirst)
                     {
                         var cylinderOfFirst = firstMyRepeatedEntity.listOfCylindricalSurfaces[i];
-                        KLdebug.Print("Sto analizzando lo " + i + "-esimo cilindro: ", nameFile);
 
                         if (!CylinderOfFirstAtPosition_i_IsOkReflection(firstMyRepeatedEntity, secondMyRepeatedEntity, candidateReflMyPlane, cylinderOfFirst, ref i)) return false;
                     }
@@ -321,8 +311,6 @@ namespace AssemblyRetrieval.PatternLisa.Part.PartUtilities
             //The axis of the second MyRepeatedEntity should have the same axis direction and
             //should pass through the point = centroidOfSecond + v
             double[] originOfFirst = cylinderOfFirst.originCylinder;
-            var whatToWrite = string.Format("Origin of first: ({0},{1},{2})", originOfFirst[0], originOfFirst[1], originOfFirst[2]);
-            KLdebug.Print(whatToWrite, nameFile);
             var originOfFirstMyVertex = new MyVertex(originOfFirst[0], originOfFirst[1], originOfFirst[2]);
 
             var pointOnAxisMyVertex = originOfFirstMyVertex.Reflect(candidateReflMyPlane);
@@ -337,14 +325,10 @@ namespace AssemblyRetrieval.PatternLisa.Part.PartUtilities
                     cyl => cyl.axisCylinder.Equals(axisToFind));
             if (indOfFound != -1)
             {
-                KLdebug.Print("----> Insieme dei cilindri con asse cercato della 2^ RE NON VUOTO: ", nameFile);
-
                 var listOfPossibleCylinders =
                     secondMyRepeatedEntity.listOfCylindricalSurfaces.FindAll(
                         cyl => cyl.axisCylinder.Equals(axisToFind));
                 var numOfPossibleCylinders = listOfPossibleCylinders.Count;
-                KLdebug.Print("Ci sono " + numOfPossibleCylinders + "cilindri candidati. Verifico le altre caratteristiche:", nameFile);
-                KLdebug.Print("", nameFile);
 
                 //If I find cylinders with right axis line, I check the radius correspondence,
                 //the center of bases correspondence.
@@ -354,15 +338,11 @@ namespace AssemblyRetrieval.PatternLisa.Part.PartUtilities
                 while (notFound && j < numOfPossibleCylinders)
                 {
                     var possibleCylinder = listOfPossibleCylinders[j];
-                    KLdebug.Print(j + "-esimo cilindro candidato:", nameFile);
                     if (Math.Abs(cylinderOfFirst.radiusCylinder - possibleCylinder.radiusCylinder) < tolerance)
                     {
-                        KLdebug.Print("----raggio del cilindro OK", nameFile);
-
                         if (CheckOfClosedEdgesCorrespondenceRefl(cylinderOfFirst, possibleCylinder,
                             candidateReflMyPlane))
                         {
-                            KLdebug.Print("TROVATO CILINDRO GIUSTO. FINE", nameFile);
                             notFound = false;
                         }
                     }
@@ -370,8 +350,6 @@ namespace AssemblyRetrieval.PatternLisa.Part.PartUtilities
                 }
                 if (notFound)
                 {
-                    KLdebug.Print("", nameFile);
-                    KLdebug.Print("NESSUN CILINDRO CORRISPONDENTE. FINE", nameFile);
                     return false;
                 }
 
@@ -380,7 +358,6 @@ namespace AssemblyRetrieval.PatternLisa.Part.PartUtilities
             }
             else
             {
-                KLdebug.Print("----> Insieme dei cilindri con asse corrispondente della 2^ RE VUOTO. FINE", nameFile);
                 return false;
             }
             return true;
@@ -405,19 +382,10 @@ namespace AssemblyRetrieval.PatternLisa.Part.PartUtilities
             int numOfCircleSecond = listOfCircleSecond.Count;
             int numOfEllipseSecond = listOfEllipseSecond.Count;
 
-            KLdebug.Print("Numero circle chiuse della 1^ RE: " + numOfCircleFirst, nameFile);
-            KLdebug.Print("Numero circle chiuse della 2^ RE: " + numOfCircleSecond, nameFile);
-            KLdebug.Print("Numero ellipse chiuse della 1^ RE: " + numOfEllipseFirst, nameFile);
-            KLdebug.Print("Numero ellipse chiuse della 2^ RE: " + numOfEllipseSecond, nameFile);
-
             if (numOfCircleFirst == numOfCircleSecond && numOfEllipseFirst == numOfEllipseSecond)
             {
-                KLdebug.Print("Il numero di CIRCLE e ELLIPSE corrisponde.", nameFile);
-                KLdebug.Print(" ", nameFile);
-
                 if (numOfCircleFirst + numOfEllipseFirst == 0)  //cylinders with baseFace not planar
                 {
-                    KLdebug.Print("Non ci sono circle o ellipse di base. FINE DELLA VERIFICA DELLA CORRISPONDENZA DEGLI EDGE DI BASE DEL CILINDRO.", nameFile);
                     return true;
                 }
                 if (!CorrespondenceOfCirclesInCylinderRefl(candidateReflMyPlane, listOfCircleFirst, listOfCircleSecond)) return false;
@@ -428,78 +396,6 @@ namespace AssemblyRetrieval.PatternLisa.Part.PartUtilities
             }
             return false;
 
-            #region prova
-            //bool firstCenterOk = false;
-            //if (cylinderOfFirst.firstBaseCurve.Identity() == possibleCylinder.firstBaseCurve.Identity())
-            //{
-            //    if (cylinderOfFirst.firstBaseCurve.IsCircle())
-            //    {
-            //        double[] firstCircleParam = cylinderOfFirst.firstBaseCurve.CircleParams;
-            //        var firstCenter = new MyVertex(firstCircleParam[0], firstCircleParam[1], firstCircleParam[2]);
-
-            //        double[] secondCircleParam = possibleCylinder.firstBaseCurve.CircleParams;
-            //        var secondCenter = new MyVertex(secondCircleParam[0], secondCircleParam[1], secondCircleParam[2]);
-
-            //        firstCenterOk = secondCenter.IsTranslationOf(firstCenter, candidateTranslationArray);
-
-            //    }
-            //    else
-            //    {
-            //        double[] firstEllipseParam = cylinderOfFirst.firstBaseCurve.GetEllipseParams();
-            //        var firstCenter = new MyVertex(firstEllipseParam[0], firstEllipseParam[1], firstEllipseParam[2]);
-            //        var firstMajorRad = firstEllipseParam[3];
-            //        double[] firstMajorRadAxis = { firstEllipseParam[4], firstEllipseParam[5], firstEllipseParam[6] };
-            //        var firstMinorRad = firstEllipseParam[7];
-            //        double[] firstMinorRadAxis = { firstEllipseParam[8], firstEllipseParam[9], firstEllipseParam[10] };
-
-            //        double[] secondEllipseParam = possibleCylinder.secondBaseCurve.GetEllipseParams();
-            //        var secondCenter = new MyVertex(secondEllipseParam[0], secondEllipseParam[1], secondEllipseParam[2]);
-            //        var secondMajorRad = secondEllipseParam[3];
-            //        double[] secondMajorRadAxis = { secondEllipseParam[4], secondEllipseParam[5], secondEllipseParam[6] };
-            //        var secondMinorRad = secondEllipseParam[7];
-            //        double[] secondMinorRadAxis = { secondEllipseParam[8], secondEllipseParam[9], secondEllipseParam[10] };
-
-            //        firstCenterOk = secondCenter.IsTranslationOf(firstCenter, candidateTranslationArray);
-            //    }
-
-
-
-
-            //if (cylinderOfFirst.firstBaseCurve.IsCircle())
-            //{
-            //    double[] firstCircleParam = cylinderOfFirst.firstBaseCurve.CircleParams;
-            //    var firstCenter = new MyVertex(firstCircleParam[0], firstCircleParam[1], firstCircleParam[2]);
-            //    if (possibleCylinder.firstBaseCurve.IsCircle())
-            //    {
-            //        double[] secondCircleParam = possibleCylinder.firstBaseCurve.CircleParams;
-            //        var secondCenter = new MyVertex(secondCircleParam[0], secondCircleParam[1], secondCircleParam[2]);
-            //        bool firstCenterOk = secondCenter.IsTranslationOf(firstCenter, candidateTranslationArray);
-            //    }
-            //    else
-            //    {
-            //        if (possibleCylinder.secondBaseCurve.IsCircle())
-            //        {
-            //            double[] secondCircleParam = possibleCylinder.secondBaseCurve.CircleParams;
-            //            var secondCenter = new MyVertex(secondCircleParam[0], secondCircleParam[1],
-            //                secondCircleParam[2]);
-            //            bool firstCenterOk = secondCenter.IsTranslationOf(firstCenter, candidateTranslationArray);
-            //        }
-            //    }
-            //}
-            //else //obviously cylinderOfFirst is an ellipse
-            //{
-            //    double[] firstEllipseParam = cylinderOfFirst.firstBaseCurve.GetEllipseParams();
-            //    var firstCenter = new MyVertex(firstEllipseParam[0], firstEllipseParam[1], firstEllipseParam[2]);
-            //    var firstMajorRad = firstEllipseParam[3];
-            //    double[] firstMajorRadAxis = { firstEllipseParam[4], firstEllipseParam[5], firstEllipseParam[6] };
-            //    var firstMinorRad = firstEllipseParam[7];
-            //    double[] firstMinorRadAxis = { firstEllipseParam[8], firstEllipseParam[9], firstEllipseParam[10] };
-            //    if (possibleCylinder.firstBaseCurve.IsEllipse())
-            //    {
-
-            //    }
-            //}
-            #endregion
         }
 
         public static bool CorrespondenceOfCirclesInCylinderRefl(MyPlane candidateReflMyPlane,
@@ -517,28 +413,19 @@ namespace AssemblyRetrieval.PatternLisa.Part.PartUtilities
                 // for every circle of first cylinder
                 while (i < numOfCircleFirst)
                 {
-                    KLdebug.Print(i + "-esimo Circle del 1° cilindro:", nameFile);
 
                     var firstCenter = listOfCircleFirst[i].centerCircle;
-                    var whatToWrite = string.Format("Centro della prima crf ({0},{1},{2})", firstCenter.x, firstCenter.y, firstCenter.z);
-                    KLdebug.Print(whatToWrite, nameFile);
-
+                   
                     int j = 0;
                     var thisCircleIsOk = false;
 
                     while (thisCircleIsOk == false && j < numOfCircleSecond)
                     {
-                        KLdebug.Print(j + "-esimo Circle del 2° cilindro:", nameFile);
-
                         var secondCenter = listOfCircleSecond[j].centerCircle;
 
-                        whatToWrite = string.Format("Centro della seconda crf ({0},{1},{2})", secondCenter.x, secondCenter.y, secondCenter.z);
-                        KLdebug.Print(whatToWrite, nameFile);
-
+                        
                         thisCircleIsOk = secondCenter.IsReflectionOf(firstCenter, candidateReflMyPlane);
-                        KLdebug.Print("Corrispondono i centri? " + thisCircleIsOk, nameFile);
-                        KLdebug.Print(" ", nameFile);
-
+                        
                         if (thisCircleIsOk)
                         {
                             listOfCircleSecond.RemoveAt(j);
@@ -547,7 +434,6 @@ namespace AssemblyRetrieval.PatternLisa.Part.PartUtilities
                     }
                     if (!thisCircleIsOk)
                     {
-                        KLdebug.Print("Non ho trovato nessun Circle che vada bene nel 2° cilindro. FINE.", nameFile);
                         return false;
                     }
                     else
@@ -557,13 +443,7 @@ namespace AssemblyRetrieval.PatternLisa.Part.PartUtilities
                     }
                 }
             }
-            else
-            {
-                KLdebug.Print("Non ci sono Circle in questo cilindro della 1^ RE. Passo agli ellissi.", nameFile);
-            }
-            KLdebug.Print("VERIFICA DEI CIRCLE é OK.", nameFile);
-            KLdebug.Print(" ", nameFile);
-
+       
             return true;
         }
 
@@ -584,32 +464,22 @@ namespace AssemblyRetrieval.PatternLisa.Part.PartUtilities
                 while (i < numOfEllipseFirst)
                 {
                     var firstEllipse = listOfEllipseFirst[i];
-                    KLdebug.Print(i + "-esimo Ellipse del 1° cilindro:", nameFile);
-                    var whatToWrite = string.Format("Centro della prima ellisse ({0},{1},{2})", firstEllipse.centerEllipse.x, firstEllipse.centerEllipse.y, firstEllipse.centerEllipse.z);
-                    KLdebug.Print(whatToWrite, nameFile);
-
                     int j = 0;
                     var thisEllipseIsOk = false;
 
                     while (thisEllipseIsOk == false && j < numOfEllipseSecond)
                     {
                         var secondEllipse = listOfEllipseSecond[j];
-                        KLdebug.Print(j + "-esimo Ellipse del 2° cilindro:", nameFile);
-                        whatToWrite = string.Format("Centro della seconda ellisse ({0},{1},{2})", secondEllipse.centerEllipse.x, secondEllipse.centerEllipse.y, secondEllipse.centerEllipse.z);
-                        KLdebug.Print(whatToWrite, nameFile);
-
+                       
                         //comparison of the ellipse centers:
                         thisEllipseIsOk = secondEllipse.centerEllipse.IsReflectionOf(firstEllipse.centerEllipse,
                             candidateReflMyPlane);
                         if (thisEllipseIsOk)
                         {
-                            KLdebug.Print("Corrispondono i centri? " + thisEllipseIsOk, nameFile);
                             //if the radius correspond:
                             if (Math.Abs(firstEllipse.majorRadEllipse - secondEllipse.majorRadEllipse) < tolerance &&
                                 Math.Abs(firstEllipse.minorRadEllipse - secondEllipse.minorRadEllipse) < tolerance)
                             {
-                                KLdebug.Print("Corrispondono i major minor radius? True", nameFile);
-
                                 //check if the directions corresponding to the axis are ok:
 
                                 double[] firstMajorAxisDirectionEllipseOpposite =
@@ -631,25 +501,21 @@ namespace AssemblyRetrieval.PatternLisa.Part.PartUtilities
                                         FunctionsLC.MyEqualsArray(ReflectNormal(firstEllipse.minorAxisDirectionEllipse, candidateReflMyPlane), secondEllipse.minorAxisDirectionEllipse) ||
                                     FunctionsLC.MyEqualsArray(ReflectNormal(firstMinorAxisDirectionEllipseOpposite, candidateReflMyPlane), secondEllipse.minorAxisDirectionEllipse))
                                     {
-                                        KLdebug.Print("Corrispondono i major minor axis direction? True", nameFile);
                                         listOfEllipseSecond.RemoveAt(j);
                                     }
                                     else
                                     {
-                                        KLdebug.Print("Corrispondono i major minor axis direction? False", nameFile);
                                         thisEllipseIsOk = false;
                                     }
 
                                 }
                                 else
                                 {
-                                    KLdebug.Print("Corrispondono i major minor axis direction? False", nameFile);
                                     thisEllipseIsOk = false;
                                 }
                             }
                             else
                             {
-                                KLdebug.Print("Corrispondono i major minor radius? False", nameFile);
                                 thisEllipseIsOk = false;
                             }
                         }
@@ -657,7 +523,6 @@ namespace AssemblyRetrieval.PatternLisa.Part.PartUtilities
                     }
                     if (!thisEllipseIsOk)
                     {
-                        KLdebug.Print("Non ho trovato nessun Ellipse che vada bene nel 2° cilindro. Fine.", nameFile);
                         return false;
                     }
                     else
@@ -667,12 +532,7 @@ namespace AssemblyRetrieval.PatternLisa.Part.PartUtilities
                     }
                 }
             }
-            else
-            {
-                KLdebug.Print("Non ci sono Ellipse in questo cilindro della 1^ RE.", nameFile);
-            }
-            KLdebug.Print("VERIFICA DEGLI ELLIPSE é OK.", nameFile);
-            KLdebug.Print(" ", nameFile);
+          
             return true;
         }
 
@@ -682,9 +542,6 @@ namespace AssemblyRetrieval.PatternLisa.Part.PartUtilities
         public static bool IsReflectionTwoREGivenCandidateReflPlane(MyRepeatedEntity firstMyRepeatedEntity,
             MyRepeatedEntity secondMyRepeatedEntity, MyPlane candidateReflMyPlane)
         {
-            const string nameFile = "GetReflectionalPattern.txt";
-            KLdebug.Print(" ", nameFile);
-            var whatToWrite = "";
 
             //Vertex analysis for Reflection:
             var firstListOfVertices = firstMyRepeatedEntity.listOfVertices;
@@ -694,12 +551,6 @@ namespace AssemblyRetrieval.PatternLisa.Part.PartUtilities
 
             if (firstNumOfVerteces == secondNumOfVerteces)
             {
-                KLdebug.Print(" ", nameFile);
-                KLdebug.Print("Numero di vertici prima RE: " + firstNumOfVerteces, nameFile);
-                KLdebug.Print("Numero di vertici seconda RE: " + secondNumOfVerteces, nameFile);
-                KLdebug.Print("Il numero di vertici corrisponde. Passo alla verifica della corrispondenza per riflessione:", nameFile);
-                KLdebug.Print(" ", nameFile);
-
                 int i = 0;
                 while (i < firstNumOfVerteces)
                 {
@@ -709,39 +560,24 @@ namespace AssemblyRetrieval.PatternLisa.Part.PartUtilities
                         var found =
                             secondListOfVertices.Find(
                                 vert => vert.IsReflectionOf(firstListOfVertices[i], candidateReflMyPlane));
-                        whatToWrite = string.Format("Ho trovato che {0}-esimo vertice: ({1}, {2}, {3})", i, firstListOfVertices[i].x,
-                            firstListOfVertices[i].y, firstListOfVertices[i].z);
-                        KLdebug.Print(whatToWrite, nameFile);
-                        whatToWrite = string.Format("ha come suo riflesso ({0}, {1}, {2})", found.x, found.y, found.z);
+
                         var scarto =
                             new MyVertex(Math.Abs(firstListOfVertices[i].Reflect(candidateReflMyPlane).x - found.x),
                                 Math.Abs(firstListOfVertices[i].Reflect(candidateReflMyPlane).y - found.y),
                                 Math.Abs(firstListOfVertices[i].Reflect(candidateReflMyPlane).z - found.z));
-                        whatToWrite = string.Format("scarto: ({0}, {1}, {2})", scarto.x, scarto.y, scarto.z);
-                        KLdebug.Print(whatToWrite, nameFile);
-                        KLdebug.Print(" ", nameFile);
-
+                       
                         i++;
                     }
                     else
                     {
-                        KLdebug.Print("TROVATO VERTICE NON CORRISPONDENTE ALLA CERCATA RIFLESSIONE!", nameFile);
-                        KLdebug.Print(" ", nameFile);
-
-                        return false;
+                       return false;
                     }
                 }
             }
             else
             {
-                KLdebug.Print("NUMERO DI VERTICI NELLE DUE RE NON CORRISPONDENTE. IMPOSSIBILE EFFETTUARE IL CHECK DEI VERTICI!", nameFile);
-                KLdebug.Print(" ", nameFile);
-
                 return false;
             }
-
-            KLdebug.Print("   ANDATO A BUON FINE IL CHECK DEI VERTICI: PASSO AL CHECK DELLE FACCE.", nameFile);
-            KLdebug.Print(" ", nameFile);
 
             //Check of correct position of normals of all Planar face:
             if (!CheckOfPlanesForReflection(firstMyRepeatedEntity, secondMyRepeatedEntity, candidateReflMyPlane))

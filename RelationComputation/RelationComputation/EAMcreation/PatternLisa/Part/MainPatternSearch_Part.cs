@@ -2,7 +2,6 @@
 using System.IO;
 using System.Linq;
 using System.Text;
-using AssemblyRetrieval.Debug;
 using AssemblyRetrieval.PatternLisa.ClassesOfObjects;
 using AssemblyRetrieval.PatternLisa.Functions_modifiedFromKatia;
 using AssemblyRetrieval.PatternLisa.Part.PartUtilities;
@@ -73,12 +72,6 @@ namespace AssemblyRetrieval.PatternLisa.Part
             }
             //SwModel.InsertSketch();
 
-            const string nameFile = "RISULTATI.txt";
-            KLdebug.Print(" ", nameFile);
-            KLdebug.Print("Numero di pattern di lunghezza > 2: " + listOfOutputPattern.Count, nameFile);
-            KLdebug.Print("Numero di pattern di lunghezza = 2: " + listOfOutputPatternTwo.Count, nameFile);
-
-            
             //Patterns are subdivided in Line patterns and in Circle patterns:
             var listOfOutputPatternLine = new List<MyPattern>();
             var listOfOutputPatternCircum = new List<MyPattern>();
@@ -87,14 +80,10 @@ namespace AssemblyRetrieval.PatternLisa.Part
                 if (pattern.pathOfMyPattern.GetType() == typeof(MyLine))
                 {
                     listOfOutputPatternLine.Add(pattern);
-                    KLdebug.Print("- pattern di tipo " + pattern.typeOfMyPattern, nameFile);
-                    KLdebug.Print("  di lunghezza " + pattern.listOfMyREOfMyPattern.Count, nameFile);
                 }
                 else 
                 {
                     listOfOutputPatternCircum.Add(pattern);
-                    KLdebug.Print("- pattern di tipo " + pattern.typeOfMyPattern, nameFile);
-                    KLdebug.Print("  di lunghezza " + pattern.listOfMyREOfMyPattern.Count, nameFile);
                 }
             }
 
@@ -103,11 +92,7 @@ namespace AssemblyRetrieval.PatternLisa.Part
             ColorFace.MyVisualOutput(listOfOutputPatternCircum, mySwApplication);
 
             //The same for patterns of length 2:
-            foreach (var pattern in listOfOutputPatternTwo)
-            {
-                KLdebug.Print("- pattern di tipo " + pattern.typeOfMyPattern, nameFile);
-                KLdebug.Print("  di lunghezza " + pattern.listOfMyREOfMyPattern.Count, nameFile);
-            }
+       
             ColorFace.MyVisualOutput(listOfOutputPatternTwo, mySwApplication);
 
             //Build the list of MyGroupingSurfaceForPatterns:
@@ -147,22 +132,6 @@ namespace AssemblyRetrieval.PatternLisa.Part
             PartUtilities_ComposedPatterns.GeometryAnalysis.FindComposedPatterns(listOfGroupingSurfaceForPatterns, out listOfOutputComposedPattern,
                 out listOfOutputComposedPatternTwo, SwModel, mySwApplication, ref fileOutput);
 
-            KLdebug.Print(" ", nameFile);
-            KLdebug.Print("Numero di pattern composti di lunghezza > 2: " +
-                listOfOutputComposedPattern.Count, nameFile);
-            KLdebug.Print("Numero di pattern composti di lunghezza = 2: " +
-                listOfOutputComposedPatternTwo.Count, nameFile);
-
-            foreach (var composedPattern in listOfOutputComposedPattern)
-            {
-                KLdebug.Print("- pattern di tipo " + composedPattern.typeOfMyComposedPattern, nameFile);
-                KLdebug.Print("  di lunghezza " + composedPattern.listOfMyPattern.Count, nameFile);
-            }
-            foreach (var composedPattern in listOfOutputComposedPatternTwo)
-            {
-                KLdebug.Print("- pattern di tipo " + composedPattern.typeOfMyComposedPattern, nameFile);
-                KLdebug.Print("  di lunghezza " + composedPattern.listOfMyPattern.Count, nameFile);
-            }
 
             ColorFace.MyVisualOutput_ComposedPatterns(listOfOutputComposedPattern,
             listOfOutputComposedPatternTwo, mySwApplication, SwModel);

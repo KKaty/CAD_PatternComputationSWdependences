@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using Accord.Math;
-using AssemblyRetrieval.Debug;
 using AssemblyRetrieval.PatternLisa.ClassesOfObjects;
 using AssemblyRetrieval.PatternLisa.GeometricUtilities;
 
@@ -262,7 +261,6 @@ namespace AssemblyRetrieval.PatternLisa.Part.PathCreation_Part
             }
             catch (Exception exception)
             {
-                KLdebug.Print(exception.Message, "Errore.txt");
             }
         }
     }

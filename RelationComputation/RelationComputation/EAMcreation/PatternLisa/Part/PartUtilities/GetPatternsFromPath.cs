@@ -1,6 +1,5 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
-using AssemblyRetrieval.Debug;
 using AssemblyRetrieval.PatternLisa.ClassesOfObjects;
 
 namespace AssemblyRetrieval.PatternLisa.Part.PartUtilities
@@ -22,18 +21,13 @@ namespace AssemblyRetrieval.PatternLisa.Part.PartUtilities
 
             if (myPathOfPoints.pathGeometricObject.GetType() == typeof (MyLine))
             {
-                const string nameFile = "GetLinearPatterns.txt";
-                KLdebug.Print(" ", nameFile);
-                KLdebug.Print("POSSIBILE TRASLAZIONE retta. AVVIO", nameFile);
+                
                 return GetPatternsFromLinearPath(listOfREOnThePath, myPathOfPoints.pathGeometricObject,
                     ref listOfPathOfCentroids, listOfREOnThisSurface, ref listOfMatrAdj, ref listOfMyGroupingSurface,
                     listOfInitialGroupingSurface, ref listOfOutputPattern, ref listOfOutputPatternTwo);
             }
             else
             {
-                const string nameFile = "GetCircularPatterns.txt";
-                KLdebug.Print(" ", nameFile);
-                KLdebug.Print("POSSIBILE TRASLAZIONE o ROTAZIONE su circonferenza. AVVIO", nameFile);
                 return GetPatternsFromCircularPath(listOfREOnThePath, myPathOfPoints.pathGeometricObject,
                     ref listOfPathOfCentroids, listOfREOnThisSurface, ref listOfMatrAdj, ref listOfMyGroupingSurface,
                     listOfInitialGroupingSurface, ref listOfOutputPattern, ref listOfOutputPatternTwo);
@@ -57,11 +51,6 @@ namespace AssemblyRetrieval.PatternLisa.Part.PartUtilities
             var numOfRE = listOfREOnThePath.Count;
             var noStop = true;
 
-            const string nameFile = "GetLinearPatterns.txt";
-            KLdebug.Print(" ", nameFile);
-            KLdebug.Print("VERIFICA DELLE POSSIBILI TRASLAZIONI TRA " + numOfRE + " REPEATED ENTITY:", nameFile);
-            KLdebug.Print(" ", nameFile);
-
             var i = 0;
             while (i < (numOfRE - 1))
             {
@@ -82,15 +71,11 @@ namespace AssemblyRetrieval.PatternLisa.Part.PartUtilities
                         ref listOfOutputPattern, ref listOfOutputPatternTwo);
                 }
             }
-            KLdebug.Print(" ", nameFile);
-            KLdebug.Print("FINE LISTA :) ", nameFile);
-
+            
             if (noStop)
             {
-                KLdebug.Print("NESSUNA INTERRUZIONE: PATTERN DI LUNGHEZZA MASSIMA SU QUESTO PATH!", nameFile);
                 return true;
             }
-            KLdebug.Print("C'E STATA ALMENO UNA INTERRUZIONE: PATTERN DI LUNGHEZZA non MASSIMA SU QUESTO PATH!", nameFile);
             return false;
         }
 
@@ -104,10 +89,6 @@ namespace AssemblyRetrieval.PatternLisa.Part.PartUtilities
             var numOfRE = listOfREOnThePath.Count;
             var noStop = true;
 
-            const string nameFile = "GetCircularPatterns.txt";
-            KLdebug.Print(" ", nameFile);
-            KLdebug.Print("VERIFICA DELLE POSSIBILI TRASLAZIONI SU CIRCONFERENZA O ROTAZIONI TRA " + numOfRE + " REPEATED ENTITY:", nameFile);
-            KLdebug.Print(" ", nameFile);
 
             var i = 0;
             while (i < (numOfRE - 1))
@@ -141,12 +122,9 @@ namespace AssemblyRetrieval.PatternLisa.Part.PartUtilities
                 }
 
             }
-            KLdebug.Print(" ", nameFile);
-            KLdebug.Print("FINE LISTA :) ", nameFile);
-
+           
             if (noStop)
             {
-                KLdebug.Print("NESSUNA INTERRUZIONE: PATTERN DI LUNGHEZZA MASSIMA SU QUESTO PATH!", nameFile);
                 return true;
             }
             return false;

@@ -1,6 +1,5 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
-using AssemblyRetrieval.Debug;
 using AssemblyRetrieval.PatternLisa.ClassesOfObjects;
 
 namespace AssemblyRetrieval.PatternLisa.Part.PartUtilities
@@ -14,23 +13,13 @@ namespace AssemblyRetrieval.PatternLisa.Part.PartUtilities
             ref List<MyGroupingSurface> listOfMyGroupingSurface,
             ref List<MyPattern> listOfOutputPattern, ref List<MyPattern> listOfOutputPatternTwo)
         {
-            const string nameFile = "GetTranslationalPatterns.txt";
-            KLdebug.Print(" ", nameFile);
-            KLdebug.Print(" ", nameFile);
-            KLdebug.Print("             UPDATE STEP", nameFile);
-            KLdebug.Print("CURRENT SITUATION:", nameFile);
-            KLdebug.Print("listOfOutputPattern.Count = " + listOfOutputPattern.Count, nameFile);
-            KLdebug.Print("listOfOutputPatternTwo.Count = " + listOfOutputPatternTwo.Count, nameFile);
-            KLdebug.Print(" ", nameFile);
-
+            
             var lengthOfPattern = newPattern.listOfMyREOfMyPattern.Count;
 
             // if lengthOfPattern = 2, I add the newPatternPoint only if there is not another pattern in listOfOutputPatternTwo 
             // containing one of the two RE in the newPatternPoint.
             if (lengthOfPattern == 2)
             {
-                KLdebug.Print("Entrata nel lengthOfPattern = " + lengthOfPattern, nameFile);
-
                 int i = 0;
                 var addOrNot = true;
                 while (addOrNot == true && i < 2)
@@ -49,22 +38,16 @@ namespace AssemblyRetrieval.PatternLisa.Part.PartUtilities
                 if (addOrNot == true)
                 {
                     listOfOutputPatternTwo.Add(newPattern);
-                    KLdebug.Print("AGGIUNTO! Non ho trovato altri Pattern da 2 con intersezione non nulla con il corrente.", nameFile);
                 }
-                else
-                {
-                    KLdebug.Print("NON AGGIUNTO! Trovato altro Pattern da 2 che interseca questo.", nameFile);
-                }
+             
 
             }
             // if lengthOfPattern > 2, I add the newPatternPoint and I update the other data
             // (aiming not to find pattern containing RE already set in this newPatternPoint)
             else
             {
-                KLdebug.Print("Entrata nel lengthOfPattern = " + lengthOfPattern, nameFile);
 
                 listOfOutputPattern.Add(newPattern);
-                KLdebug.Print("AGGIUNTO (senza verifiche..)", nameFile);
 
                 UpdateOtherData(newPattern, ref listOfPathOfCentroids, listOfREOnThisSurface, ref listOfMatrAdj,
                     ref listOfMyGroupingSurface, ref listOfOutputPatternTwo);
@@ -78,19 +61,15 @@ namespace AssemblyRetrieval.PatternLisa.Part.PartUtilities
             ref List<MyGroupingSurface> listOfMyGroupingSurface, ref List<MyPattern> listOfOutputPatternTwo)
         {
             const string nameFile = "GetTranslationalPatterns.txt";
-            KLdebug.Print("--> AGGIORNAMENTO DI TUTTI GLI ALTRI DATI:", nameFile);
-
+         
             foreach (var re in newPattern.listOfMyREOfMyPattern)
             {
                 var indOfThisCentroid = listOfREOnThisSurface.IndexOf(re);
-                KLdebug.Print("UPDATE per RE n° " + indOfThisCentroid, nameFile);
 
                 UpdateListOfMyPathOfCentroids(ref listOfPathOfCentroids, indOfThisCentroid, nameFile);
                 UpdateListOfMyMatrAdj(ref listOfMatrAdj, indOfThisCentroid, nameFile);
                 UpdateListOfMyGroupingSurface(re, ref listOfMyGroupingSurface, indOfThisCentroid);
                 UpdateListOfPatternTwo(re, ref listOfOutputPatternTwo, indOfThisCentroid);
-
-                KLdebug.Print(" ", nameFile);
 
             }
         }
@@ -100,9 +79,6 @@ namespace AssemblyRetrieval.PatternLisa.Part.PartUtilities
         public static void UpdateListOfPatternTwo(MyRepeatedEntity re, 
             ref List<MyPattern> listOfOutputPatternTwo, int indOfThisCentroid)
         {
-            const string nameFile = "GetTranslationalPatterns.txt";
-            KLdebug.Print("     ---> UpdateListOfPatternTwo", nameFile);
-
             var indOfFound =
                 listOfOutputPatternTwo.FindIndex(
                     pattern => pattern.listOfMyREOfMyPattern.FindIndex(reInPattern => reInPattern.idRE == re.idRE) != -1);
@@ -110,26 +86,9 @@ namespace AssemblyRetrieval.PatternLisa.Part.PartUtilities
             {
                 var found = listOfOutputPatternTwo.Find(
                     pattern => pattern.listOfMyREOfMyPattern.FindIndex(reInPattern => reInPattern.idRE == re.idRE) != -1);
-                KLdebug.Print(" Trovato pattern da 2 contenente la RE corrente (posiz :" + indOfThisCentroid + "):", nameFile);
-                KLdebug.Print(" Lunghezza (deve essere 2): " + found.listOfMyREOfMyPattern.Count, nameFile);
-                KLdebug.Print(" Posizione nella lista: " + listOfOutputPatternTwo.IndexOf(found), nameFile);
-                KLdebug.Print(
-                    " Centroid 1^ RE nel pattern: (" + found.listOfMyREOfMyPattern[0].centroid.x + "," +
-                    found.listOfMyREOfMyPattern[0].centroid.y + "," + found.listOfMyREOfMyPattern[0].centroid.z + ")",
-                    nameFile);
-                KLdebug.Print(
-                   " Centroid 2^ RE nel pattern: (" + found.listOfMyREOfMyPattern[1].centroid.x + "," +
-                   found.listOfMyREOfMyPattern[1].centroid.y + "," + found.listOfMyREOfMyPattern[1].centroid.z + ")",
-                   nameFile);
-                KLdebug.Print("(Uno di questi due centroid deve essere quello della current RE)", nameFile);
-
 
                 listOfOutputPatternTwo.Remove(found);
-                KLdebug.Print(" RIMOSSO dalla lista listOfOutputPatternTwo!", nameFile);
-
             }
-            KLdebug.Print(" ", nameFile);
-
         }
 
         //Update the list of MyGroupingSurface, deleting the MyRepeatedEntity already set in the newPatternPoint
@@ -137,7 +96,6 @@ namespace AssemblyRetrieval.PatternLisa.Part.PartUtilities
             ref List<MyGroupingSurface> listOfMyGroupingSurface, int indOfThisCentroid)
         {
             const string nameFile = "GetTranslationalPatterns.txt";
-            KLdebug.Print("     ---> UpdateListOfMyGroupingSurface", nameFile);
 
             var indOfFound =
                 listOfMyGroupingSurface.FindIndex(
@@ -146,27 +104,17 @@ namespace AssemblyRetrieval.PatternLisa.Part.PartUtilities
             {
                 var listOfGroupingSurfaceToUpdate = listOfMyGroupingSurface.FindAll(
                     gs => gs.listOfREOfGS.FindIndex(reInGS => reInGS.idRE == re.idRE) != -1);
-                KLdebug.Print(" Trovate GS contenenti la RE corrente (" + indOfThisCentroid + "^ RE):", nameFile);
 
                 foreach (var gs in listOfGroupingSurfaceToUpdate)
                 {
-                    KLdebug.Print(" -aggiorno superficie in posizione: " + listOfMyGroupingSurface.IndexOf(gs), nameFile);
-                    KLdebug.Print(" -tipo di superficie: " + gs.groupingSurface.Identity(), nameFile);
-                    KLdebug.Print(" -numero di RE ancora su questa GS (cioè in pattern da 2 o in nessun pattern ancora): " + gs.listOfREOfGS.Count, nameFile);
 
                     gs.listOfREOfGS.Remove(re);
-                    KLdebug.Print(" -Rimossa la currentRE. numero di RE ancora su questa GS (cioè in pattern da 2 o in nessun pattern ancora): " + gs.listOfREOfGS.Count, nameFile);
-
                     if (gs.listOfREOfGS.Count < 2)
                     {
                         listOfMyGroupingSurface.Remove(gs);
-                        KLdebug.Print(" RIMOSSA GS dalla lista di GS: era rimasta solo una RE", nameFile);
-
                     }
-                    KLdebug.Print(" ", nameFile);
                 }              
             }
-            KLdebug.Print(" ", nameFile);
 
         }
 
@@ -198,8 +146,6 @@ namespace AssemblyRetrieval.PatternLisa.Part.PartUtilities
                     {
                         if (matrAdj.matr[indOfThisCentroid, i] != 0)
                         {
-                            KLdebug.Print(" ", nameFile);
-
                             matrAdj.matr[indOfThisCentroid, i] = 0;
                             //KLdebug.Print(" porto a 0 l'entrata (" + indOfThisCentroid + "," + i + ")" , nameFile);
                             matrAdj.matr[i, indOfThisCentroid] = 0;
