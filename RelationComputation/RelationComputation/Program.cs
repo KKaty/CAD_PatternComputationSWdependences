@@ -42,7 +42,7 @@ namespace RelationComputation
             var rootComponent = (Component2)SwConfiguration.GetRootComponent();
             var fileName = rootComponent.Name2;
 
-            Console.WriteLine("Modello attivato " + fileName);
+            //Console.WriteLine("Model " + fileName + " loaded correctly");
 
             var transforation =
                 (Array)AssemblyTraverse.KL_GetTransformsOfAssemblyComponents(rootComponent, swApp);
@@ -58,7 +58,7 @@ namespace RelationComputation
             var nodeAssembly = new KLgraph.KLnodeAssembly(id, transforation, fatherName, -1, rootComponent, pathComponent, componentName, componentPath, -1,
                 childrenNumber, statistic, shape);
 
-            Console.WriteLine("Creato il nodo assemblato");
+            //Console.WriteLine("Creato il nodo assemblato");
 
             var vertexList = new List<KLgraph.KLnode>();
             var edgeList = new List<KLgraph.KLedge>();
@@ -87,17 +87,17 @@ namespace RelationComputation
 
             
 
-            Console.WriteLine("Istanze trovate " + listOfMyListOfInstances.Count);
-            foreach (var inst in listOfMyListOfInstances)
-            {
-                Console.WriteLine("Istanza di " + inst.Name + " trovata " + inst.ListOfMyComponent.Count + " volte");
-            }
+            //Console.WriteLine("Istanze trovate " + listOfMyListOfInstances.Count);
+            //foreach (var inst in listOfMyListOfInstances)
+            //{
+            //    Console.WriteLine("Istanza di " + inst.Name + " trovata " + inst.ListOfMyComponent.Count + " volte");
+            //}
 
-            Console.WriteLine("Pattern trovati " + listPattern.Count);
-            foreach (var patt in listPattern)
-            {
-                Console.WriteLine("Pattern di " + patt.listOfMyRCOfMyPattern.First().Name);
-            }
+            //Console.WriteLine("Pattern trovati " + listPattern.Count);
+            //foreach (var patt in listPattern)
+            //{
+            //    Console.WriteLine("Pattern di " + patt.listOfMyRCOfMyPattern.First().Name);
+            //}
 
 
             //Console.WriteLine("Ending.. nodi " + graph.VertexCount + " e archi " + graph.EdgeCount);

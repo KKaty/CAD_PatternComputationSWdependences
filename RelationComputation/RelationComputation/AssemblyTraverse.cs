@@ -73,11 +73,11 @@ namespace AssemblyRetrieval.EAMcreation
                     try
                     {
                         var index = 0;
-                        Console.WriteLine("Nel modello ci sono " + swChildrenComponent.Length + " componenti");
+                        //Console.WriteLine("Number of elements to analyze: " + swChildrenComponent.Length);
                         foreach (Component2 component in swChildrenComponent)
                         {
                             index++;
-                            Console.WriteLine("Componente " +  index);
+                            Console.WriteLine(String.Format("Processing component {0} over {1}" , index, swChildrenComponent.Length));
 
                             //if (!component.Name2.Contains("Arbre satellite BV"))
                             {
@@ -100,7 +100,7 @@ namespace AssemblyRetrieval.EAMcreation
 
                                 if (childrenNumber == 0)
                                 {
-                                    Console.WriteLine("Single");
+                                    //Console.WriteLine("Single");
                                     //var shape = KL_GetShapePart(component, swApplication);
                                     //var statistic = KL_GetStatisticPart(component, shape.Surface, swApplication);
                                     //swApplication.SendMsgToUser(componentName + "  " + statistic.Genus);
@@ -140,12 +140,12 @@ namespace AssemblyRetrieval.EAMcreation
                                     //to get the last name after the last "\"
                                     namePath = namePath.TrimEnd('-');
                                     string nameFileComponent = namePath.Remove((namePath.LastIndexOf('-') + 1));
-                                    Console.WriteLine("Analizzo componente " + nameFileComponent);
+                                    //Console.WriteLine("Analizzo componente " + nameFileComponent);
                                     var indexOfFind =
                                         listOfMyListOfInstances.FindIndex(list => list.Name == nameFileComponent);
                                     if (indexOfFind != -1)
                                     {
-                                        Console.WriteLine("Trovata componente con lo stesso nome " + nameFileComponent);
+                                        //Console.WriteLine("Trovata componente con lo stesso nome " + nameFileComponent);
                                         //The list referred to this component already exists. I add it to the corresponding list
                                         //var newMyComponent = new ComputeNewRepeatedComponent();
 
@@ -255,18 +255,18 @@ namespace AssemblyRetrieval.EAMcreation
                     }
                     catch (Exception e)
                     {
-                        swApplication.SendMsgToUser(e.Message);
-                        swApplication.SendMsgToUser(e.Source);
+                        Console.WriteLine(e.Message);
+                        Console.WriteLine(e.Source);
                         throw;
                     }
 
                 }
                 else
                 {
-                    swApplication.SendMsgToUser("Padre nullo");
+                    Console.WriteLine("Padre nullo");
                 }
             }
-            Console.WriteLine("Ritorno il grafo");
+            //Console.WriteLine("Ritorno il grafo");
             return graph;
         }
 
