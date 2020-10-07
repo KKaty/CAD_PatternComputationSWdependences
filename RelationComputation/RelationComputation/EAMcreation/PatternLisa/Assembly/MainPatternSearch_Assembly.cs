@@ -179,14 +179,19 @@ namespace AssemblyRetrieval.PatternLisa.Assembly
                 }
                 if (listOfOutputPattern.Any())
                         {
-                            foreach (var patternOfComponentse in listOfOutputPattern)
+                            foreach (var patternOfComponents in listOfOutputPattern)
                             {
-                                listOfOutputPatternOut.Add(patternOfComponentse);
-                                //swApplication.SendMsgToUser("Patern " + patternOfComponentse.typeOfMyPattern + " lunghezza " + patternOfComponentse.listOfMyRCOfMyPattern.Count);
+                                listOfOutputPatternOut.Add(patternOfComponents);
+                        //swApplication.SendMsgToUser("Patern " + patternOfComponentse.typeOfMyPattern + " lunghezza " + patternOfComponentse.listOfMyRCOfMyPattern.Count);
+                                var listOfOriginsThisPattern =
+                                    patternOfComponents.listOfMyRCOfMyPattern.Select(rc => rc.Origin).ToList();
+                                var patternCentroid =
+                                    ExtractInfoFromBRep.computeCentroidsOfVertices(listOfOriginsThisPattern);
+                                patternOfComponents.patternCentroid = patternCentroid;
 
-                            }
-                            
-                        }
+                    }
+
+                }
                         if (listOfOutputPatternTwo.Any())
                         {
                             foreach (var patternOfComponentse in listOfOutputPatternTwo)
