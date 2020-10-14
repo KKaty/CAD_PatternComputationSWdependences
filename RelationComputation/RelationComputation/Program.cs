@@ -67,7 +67,6 @@ namespace RelationComputation
 
             AssemblyTraverse.KL_GetGraphOfAssemblyComponents(rootComponent, nodeAssembly,
                ref vertexList, edgeList, ref listOfMyListOfInstances, swApp);
-
             
             var partList = new List<KLgraph.KLnode>(vertexList);
             partList.RemoveAll(v => v.GetType() != typeof(KLgraph.KLnodePart));
@@ -83,9 +82,9 @@ namespace RelationComputation
 
             PatternComputationFunctions.GetAssemblyPatternsOfRepeatedElements(listOfMyListOfInstances, nodeAssembly,
                 out listPattern, out listPattern2);
-          
 
-            
+
+
 
             //Console.WriteLine("Istanze trovate " + listOfMyListOfInstances.Count);
             //foreach (var inst in listOfMyListOfInstances)

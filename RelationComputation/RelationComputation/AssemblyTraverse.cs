@@ -136,10 +136,14 @@ namespace AssemblyRetrieval.EAMcreation
                                     //}
 
                                     string namePath = component.Name2;
-                                    //string nameFileComponent = namePath.Split('\\').Last();
+                                    //Console.WriteLine("Nome completo " + namePath);
+
+                                    string nameFileComponent = namePath.Split('/').Last();
+                                    //Console.WriteLine("Nome splittato " + nameFileComponent);
+
                                     //to get the last name after the last "\"
                                     namePath = namePath.TrimEnd('-');
-                                    string nameFileComponent = namePath.Remove((namePath.LastIndexOf('-') + 1));
+                                    nameFileComponent = nameFileComponent.Remove((nameFileComponent.LastIndexOf('-') + 1));
                                     //Console.WriteLine("Analizzo componente " + nameFileComponent);
                                     var indexOfFind =
                                         listOfMyListOfInstances.FindIndex(list => list.Name == nameFileComponent);

@@ -33,9 +33,11 @@ namespace AssemblyRetrieval.PatternLisa.Assembly
 
             listOfOutputPatternOut = new List<MyPatternOfComponents>(); //list of output patterns found
             listOfOutputPatternTwoOut = new List<MyPatternOfComponents>(); //list of output patterns of length 2 found
-           
+            //Console.WriteLine("Numero istanze " + ListOfMyListOfInstances.Count);
+
             for (var k = 0; k < numOfListOfInstances; k++)
             {
+                //Console.WriteLine("Analizzo istanza: " + ListOfMyListOfInstances[k].Name + " ripetuta " + ListOfMyListOfInstances[k].ListOfMyComponent.Count);
                 var listOfOutputPattern = new List<MyPatternOfComponents>(); //list of output patterns found
                 var listOfOutputPatternTwo = new List<MyPatternOfComponents>(); //list of output patterns of length 2 found
 
